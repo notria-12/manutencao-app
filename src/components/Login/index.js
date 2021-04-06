@@ -1,13 +1,15 @@
 import './styles.css';
+import React from "react";
+import { Link } from "react-router-dom";
 
 function Login() {
     return (
         <div>
-            <header>
+            {/* <header>
                 <nav className="navbar bg-primary ">
                     <h3 className="text-white">SINC - MANUTENÇÃO</h3>
                 </nav>
-            </header>
+            </header> */}
 
             <body>
                 <main className="container">
@@ -27,7 +29,7 @@ function Login() {
                             </div>
 
 
-                            <button className="w-100 btn btn-lg btn-primary mt-2" type="submit">Entrar</button>
+                            <button className="w-100 btn btn-lg btn-primary mt-2" type="submit"><Link to="/home">Entrar</Link></button>
 
                         </form>
 
