@@ -4,11 +4,25 @@
 
 
 .navbar{
-    background: rgb(91, 132, 160);
+    /* background: rgb(91, 132, 160); */
     display: flex;
     justify-content: center;
     align-items: center;
+    
 }
+
+
+
+.container{
+    /* background: rgb(237, 239, 243); */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+
+    
+}
+
 
 
 footer{
