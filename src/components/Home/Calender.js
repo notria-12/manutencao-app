@@ -13,7 +13,7 @@ function Calender() {
 
     const routeChange = (date) => {
         console.log('Date', date)
-        let path = `/activities/${date.dateStr}`
+        let path = `/home/activities/${date.dateStr}`
         history.push(path)
     }
 

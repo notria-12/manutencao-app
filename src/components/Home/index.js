@@ -32,22 +32,16 @@ function Home() {
                                 </li>
                                 <li>
                                     
-                                   <Link to=''>Sair</Link>
+                                   <Link to='/login'>Sair</Link>
                                 </li>
                             </ul>
                         </nav>
                     </div>
                     <div className="demo-app">
                         <div className="demo-app-main">
-                            <Switch>
-                                <Route path='/home'>
-                                    <Calender></Calender>
-                                </Route>
-                                <Route path='/activities/:date'>
-                                    <ActivitiesList></ActivitiesList>
-                                </Route>
+                            <Calender>
                                 
-                            </Switch>
+                            </Calender>
                         </div>
                     </div>                  
                     
