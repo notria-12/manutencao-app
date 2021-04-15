@@ -18,7 +18,7 @@ function Login() {
                             <h4 className="text-center">Bem vindo de volta</h4>
                             <p className="text-center">Entre com suas credenciais de acesso</p>
                         </div>
-                        <form>
+                        <div className='form-login'>
                             <div className="form-floating">
                                 <input type="email" className="form-control" id="floatingInput" placeholder="name@example.com" />
                                 <label for="floatingInput">Email</label>
@@ -29,9 +29,9 @@ function Login() {
                             </div>
 
 
-                            <button className="w-100 btn btn-lg btn-primary mt-2" type="submit"><Link to="/home">Entrar</Link></button>
+                            <button className="w-100 btn btn-lg btn-primary mt-2" type="button"><Link to="/home">Entrar</Link></button>
 
-                        </form>
+                        </div>
 
                     </div>
 
