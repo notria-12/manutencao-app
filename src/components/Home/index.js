@@ -1,13 +1,14 @@
-import FullCalendar, { formatDate } from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin from '@fullcalendar/interaction'
-import { INITIAL_EVENTS, createEventId } from '../../event-utils'
-import ptLocale from '@fullcalendar/core/locales/pt-br'
+
+// import { INITIAL_EVENTS, createEventId } from '../../event-utils'
+
 import './styles.css'
-import { Link } from 'react-router-dom'
+import { Link} from 'react-router-dom'
+import Calender from './Calender'
+import { Switch, Route } from "react-router-dom";
+import ActivitiesList from '../ActivitiesList/ActivitiesList';
 
 function Home() {
+    
 
 
     return (
@@ -36,27 +37,20 @@ function Home() {
                             </ul>
                         </nav>
                     </div>
-                    
                     <div className="demo-app">
                         <div className="demo-app-main">
-                            <FullCalendar
-                                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                                headerToolbar={{
-                                    left: 'prev,next',
-                                    center: 'title',
-                                    right: 'today',
-
-                                }}
-                                locales={[ptLocale]}
-                                initialView='dayGridMonth'
-                                editable={true}
-                                selectable={true}
-                                selectMirror={true}
-                                dayMaxEvents={true}
-                                initialEvents={INITIAL_EVENTS}
-                            ></FullCalendar>
+                            <Switch>
+                                <Route path='/home'>
+                                    <Calender></Calender>
+                                </Route>
+                                <Route path='/activities/:date'>
+                                    <ActivitiesList></ActivitiesList>
+                                </Route>
+                                
+                            </Switch>
                         </div>
-                    </div>
+                    </div>                  
+                    
                 </main>
 
 

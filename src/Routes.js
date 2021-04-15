@@ -2,6 +2,7 @@ import React  from 'react';
 import { Switch, Route } from "react-router-dom";
 import Login from './components/Login';
 import Home from "./components/Home";
+import ActivitiesList from './components/ActivitiesList/ActivitiesList';
 
 function Routes (){
     return(
@@ -12,6 +13,7 @@ function Routes (){
             <Route exact path="/home">
                 <Home></Home>
             </Route>
+           
 
         </Switch>
     );
