@@ -1,12 +1,17 @@
 import React from 'react';
 import {useParams} from 'react-router-dom'
+import './ActivitiesList.css'
 
 
 const ActivitiesList = (props) =>{
     const {date} = useParams()
+
+    console.log("Data", date)
     return(
         <div className='activities'>
-            <h2>{date}</h2>
+            <div className='table-activities'>
+                <h2>Aqui</h2>
+            </div>
 
         </div>
     )

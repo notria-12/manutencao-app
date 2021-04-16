@@ -2,15 +2,15 @@
 // import { INITIAL_EVENTS, createEventId } from '../../event-utils'
 
 import './styles.css'
-import { Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Calender from './Calender'
 import { Switch, Route } from "react-router-dom";
 import ActivitiesList from '../ActivitiesList/ActivitiesList';
 
-function Home() {
-    
+function Home({ routes }) {
 
 
+    console.log(routes)
     return (
         <div>
             <header>
@@ -28,23 +28,27 @@ function Home() {
                             <ul>
                                 <li>
                                     {/* <a href="">Início</a> */}
-                                   <Link to='/home'>Início</Link>
+                                    <Link to='/home/calendar'>Início</Link>
                                 </li>
                                 <li>
-                                    
-                                   <Link to='/login'>Sair</Link>
+
+                                    <Link to='/login'>Sair</Link>
                                 </li>
                             </ul>
                         </nav>
                     </div>
                     <div className="demo-app">
                         <div className="demo-app-main">
-                            <Calender>
-                                
-                            </Calender>
+                            <Switch>
+                                {
+                                    routes.map((route, i) => (
+                                        <RouteWithSubRoutes key={i} {...route}></RouteWithSubRoutes>
+                                    ))
+                                }
+                            </Switch>
                         </div>
-                    </div>                  
-                    
+                    </div>
+
                 </main>
 
 
@@ -52,6 +56,18 @@ function Home() {
 
         </div>
 
+    );
+}
+
+function RouteWithSubRoutes(route) {
+    return (
+        <Route
+            path={route.path}
+            render={props => (
+                // pass the sub-routes down to keep nesting
+                <route.component {...props} routes={route.routes} />
+            )}
+        />
     );
 }
 

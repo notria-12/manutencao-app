@@ -1,0 +1,10 @@
+.activities{
+    background-color: darkgrey;
+    display: flex;
+    flex-direction: column;
+    /* height: 80vh; */
+}
+
+.activities .table-activities{
+    flex-grow: 1;
+}

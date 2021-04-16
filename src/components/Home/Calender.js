@@ -12,13 +12,14 @@ function Calender() {
     const history = useHistory();
 
     const routeChange = (date) => {
-        console.log('Date', date)
+        // console.log('Date', date)
         let path = `/home/activities/${date.dateStr}`
         history.push(path)
     }
 
     return (
-        <FullCalendar
+        <div className="calendar">
+            <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             headerToolbar={{
                 left: 'prev,next',
@@ -38,6 +39,7 @@ function Calender() {
         // initialEvents={INITIAL_EVENTS}
 
         ></FullCalendar>
+        </div>
 
     )
 }
