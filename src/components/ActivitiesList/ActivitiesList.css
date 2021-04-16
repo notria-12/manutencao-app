@@ -1,10 +1,17 @@
 .activities{
-    background-color: darkgrey;
+    /* background-color: darkgrey; */
     display: flex;
     flex-direction: column;
-    /* height: 80vh; */
+    height: 80vh;
+    /* overflow-y: scroll; */
 }
 
-.activities .table-activities{
-    flex-grow: 1;
+.activities .table-activities {
+    /* flex-grow: 1; */
+    overflow-y: scroll;
+    /* background-color: darkgrey; */
+}
+.activities .table-activities .header{
+    position:sticky;
+    top: 0 ;
 }

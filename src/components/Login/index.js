@@ -29,7 +29,7 @@ function Login() {
                             </div>
 
 
-                            <button className="w-100 btn btn-lg btn-primary mt-2" type="button"><Link to="/home">Entrar</Link></button>
+                            <button className="w-100 btn btn-lg btn-primary mt-2" type="button"><Link to="/home/calendar">Entrar</Link></button>
 
                         </div>
 

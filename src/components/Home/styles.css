@@ -93,7 +93,7 @@ b { /* used for event dates/times */
 }
 .home-main .demo-app .demo-app-main .calendar{
   height: max-content;
-  color: #fff;
+  /* color: #fff; */
 }
 .home-main .demo-app .demo-app-main .calendar .fc .fc-scrollgrid-liquid {
   height: 70%;
