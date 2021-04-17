@@ -12,95 +12,109 @@ const ActivitiesList = (props) => {
             activity: 'INSPECIONAR CORRENTE INFERIOR',
             freq: 15,
             machine: 'SOPRADORA',
-            tec: "Fulano "
+            tec: "Fulano ",
+            product: "Desinfetante",
         },
         {
             id: 1,
             activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
             freq: 7,
             machine: 'Chiler',
-            tec: "Beltrano"
+            tec: "Beltrano",
+            product: "Á. Sanitária",
         },
         {
             id: 2,
             activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
             freq: 7,
             machine: 'CHILER',
-            tec: "Beltrano"
+            tec: "Beltrano",
+            product: "Desinfetante",
         },
         {
             id: 3,
             activity: 'INSPECIONAR CORRENTE INFERIOR',
             freq: 15,
             machine: 'SOPRADORA',
-            tec: "Fulano "
+            tec: "Fulano ",
+            product: "S. Glicerinado",
         },
         {
             id: 4,
             activity: 'INSPECIONAR ROSCA SEM FIM',
             freq: 15,
             machine: 'ROTULADORA',
-            tec: "CICLANO "
+            tec: "CICLANO ",
+            product: "S. Rajado",
         },
         {
             id: 5,
             activity: 'INSPECIONAR AJUSTE DAS ESTRELAS',
             freq: 14,
             machine: 'ENVASADORA',
-            tec: "Fulano "
+            tec: "Fulano ",
+            product: "Á. Sanitária",
         },
         {
             id: 6,
             activity: 'INSPECIONAR CORRENTE INFERIOR',
             freq: 15,
             machine: 'SOPRADORA',
-            tec: "Fulano "
+            tec: "Fulano ",
+            product: "Multiuso",
         },
         {
             id: 7,
             activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
             freq: 7,
             machine: 'Chiler',
-            tec: "Beltrano"
+            tec: "Beltrano",
+            product: "Detergente",
         },
         {
             id: 8,
             activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
             freq: 7,
             machine: 'CHILER',
-            tec: "Beltrano"
+            tec: "Beltrano",
+            product: "Á. Sanitária",
         },
         {
             id: 0,
             activity: 'INSPECIONAR CORRENTE INFERIOR',
             freq: 15,
             machine: 'SOPRADORA',
-            tec: "Fulano "
+            tec: "Fulano ",
+            product: "S. Glicerinado",
         },
         {
             id: 1,
             activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
             freq: 7,
             machine: 'Chiler',
-            tec: "Beltrano"
+            tec: "Beltrano",
+            product: "Detergente",
         },
         {
             id: 2,
             activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
             freq: 7,
             machine: 'CHILER',
-            tec: "Beltrano"
+            tec: "Beltrano",
+            product: "Multiuso",
         },
         {
             id: 3,
             activity: 'INSPECIONAR CORRENTE INFERIOR',
             freq: 15,
             machine: 'SOPRADORA',
-            tec: "Fulano "
+            tec: "Fulano ",
+            product: "S. Rajado",
         },
         {
             id: 4,
             activity: 'INSPECIONAR ROSCA SEM FIM',
+            product: "Á. Sanitária", 
             freq: 15,
             machine: 'ROTULADORA',
             tec: "CICLANO "
@@ -110,28 +124,32 @@ const ActivitiesList = (props) => {
             activity: 'INSPECIONAR AJUSTE DAS ESTRELAS',
             freq: 14,
             machine: 'ENVASADORA',
-            tec: "Fulano "
+            tec: "Fulano ",
+            product: "Desinfetante",
         },
         {
             id: 6,
             activity: 'INSPECIONAR CORRENTE INFERIOR',
             freq: 15,
             machine: 'SOPRADORA',
-            tec: "Fulano "
+            tec: "Fulano ",
+            product: "S.Glicerinado",
         },
         {
             id: 7,
             activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
             freq: 7,
             machine: 'Chiler',
-            tec: "Beltrano"
+            tec: "Beltrano",
+            product: "Detergente",
         },
         {
             id: 8,
             activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
             freq: 7,
             machine: 'CHILER',
-            tec: "Beltrano"
+            tec: "Beltrano",
+            product: "Desinfetante",
         },
 
 
@@ -148,8 +166,8 @@ const ActivitiesList = (props) => {
                 <table className="table  table-primary text-primary table-hover">
                     <thead className='header' >
                         <tr>
+                            <th scope="col" className="header">Produto</th>
                             <th scope="col" className="header">Atividade</th>
-                            <th scope="col" className="header">Frequência</th>
                             <th scope="col" className="header">Técnico</th>
                             <th scope="col" className="header">Máquina</th>
                         </tr>
@@ -158,8 +176,8 @@ const ActivitiesList = (props) => {
                         {
                             activities.map((activity, i) => {
                                 return <tr key={i} onClick={() => setActivity(activity)} data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    <td>{activity.product}</td>
                                     <td>{activity.activity}</td>
-                                    <td>{activity.freq}</td>
                                     <td>{activity.tec}</td>
                                     <td>{activity.machine}</td>
                                 </tr>
@@ -191,28 +209,35 @@ function Modal(props) {
                             <label htmlFor="" className="form-label">Atividade</label>
                             <input type="text" value={props.activity.activity} className="form-control" />
                         </div>
+                        <div className="d-flex  ">
+                            <div className='m-2 '>
+                            <label htmlFor="" className="form-label">Produto</label>
+                                <input type="text" value={props.activity.product} className="form-control" />
+                            </div>
+                            <div className='m-2 col-6'>
+                                <label htmlFor="" className="form-label">Mês/Ano</label>
+                                <input type="text" value={props.activity.tec} className="form-control" />
+                            </div>
+
+                        </div>
                         <div className="d-flex">
                             <div className='m-2'>
                                 <label htmlFor="" className="form-label">Técnico</label>
                                 <input type="text" value={props.activity.tec} className="form-control" />
                             </div>
 
-                            <div className='m-2'>
-                                <label htmlFor="" className="form-label">Frequência</label>
-                                <input type="text" value={props.activity.freq} className="form-control" />
-                            </div>
-                        </div>
-                        <div className="d-flex">
-                            <div className='m-2'>
-                                <label htmlFor="" className="form-label">Mês/Ano</label>
-                                <input type="text" value={props.activity.tec} className="form-control" />
-                            </div>
-
-                            <div className='m-2'>
+                            <div className='m-2 d-flex col-6'>
+                                <div className='mx-1'>
+                                <label htmlFor="" className="form-label col-4">Frequência</label>
+                                <input type="number" value={props.activity.freq} className="form-control" />
+                                </div>
+                                <div className='mx-1'>
                                 <label htmlFor="" className="form-label">Paradas</label>
-                                <input type="text" value={props.activity.freq} className="form-control" />
+                                <input type="number" value={props.activity.freq} className="form-control" />
+                                </div>
                             </div>
                         </div>
+                        
                         <div className="m-2">
                             <label htmlFor="" className="form-label">Realizada em:</label>
                         </div>
@@ -231,8 +256,8 @@ function Modal(props) {
 
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" className="btn btn-primary">Save changes</button>
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" className="btn btn-primary">Salvar</button>
                     </div>
                 </div>
             </div>

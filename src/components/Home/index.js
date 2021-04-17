@@ -28,7 +28,7 @@ function Home({ routes }) {
                             <ul>
                                 <li>
                                     {/* <a href="">Início</a> */}
-                                    <Link to='/home/calendar'>Início</Link>
+                                    <Link to='/home/calendar'>Cronograma</Link>
                                 </li>
                                 <li>
 
