@@ -114,7 +114,7 @@ const ActivitiesList = (props) => {
         {
             id: 4,
             activity: 'INSPECIONAR ROSCA SEM FIM',
-            product: "Á. Sanitária", 
+            product: "Á. Sanitária",
             freq: 15,
             machine: 'ROTULADORA',
             tec: "CICLANO "
@@ -156,11 +156,81 @@ const ActivitiesList = (props) => {
     ]
 
     const [infoActivity, setActivity] = useState({})
+    const [filterValue, setFilterValue] = useState('0')
+    const [subFilter, setSubFilter] = useState('')
+    const [filterValues, setFilterValues] = useState([])
+    const [auxActivities, setAuxActivities] = useState([])
+
+    const changeMainFilter = (event) => {
+        const value = event.target.value;
+        
+        setFilterValue(value)
+
+        switch (value) {
+            case '1':
+                    setFilterValues(['SOPRADORA', 'CHILER', 'ROTULADORA', 'ENVASADORA'])
+                break;
+            case '2':
+                    setFilterValues(['Fulano', 'Ciclano', 'Beltrano'])
+                break;
+            case '3':
+                   setFilterValues(['Á. Sanitária', 'S. Rajado', 'Desinfetante', 'S. Glicerinado', 'Multiuso', 'Detergente'] )
+                   break;
+            default:
+                setSubFilter('')
+                break;
+        }
+        
+    }
+
+    const changeSubFilter = (event) => {
+        const value = event.target.value;
+
+        setSubFilter(value);
+        
+        if(!subFilter.isEmpty()){
+            
+        }
+
+    }
+    
+
+
 
 
     return (
         <div className='activities'>
-            <h3>Atividades do dia {date}</h3>
+            <div className='header-acitvities d-flex justify-content-between '>
+                <h3>Atividades do dia {date}</h3>
+
+                <div className='filter-activities col-5 d-flex align-content-center m-2'>
+                    <label className='form-label m-2 '>
+                        Filtrar:
+                    </label>
+
+                    <select class="form-select mx-2" aria-label="Default select example" value={filterValue} onChange={changeMainFilter}>
+                        <option selected value="0">Selecione um filtro...</option>
+                        <option value="1">Máquina</option>
+                        <option value="2">Técnico</option>
+                        <option value="3">Produto</option>
+                    </select>
+
+                    {
+                        filterValue !== '0' ? 
+                        <select class="form-select" aria-label="Default select example" value={subFilter} onChange={changeSubFilter}>
+                            {/* <option selected value="0">Selecione um filtro...</option> */}
+                           {
+                               filterValues.map( (filter, i) => {
+                                   return <option key={i}>{filter}</option>
+                               })
+                           }
+                        </select> : <div></div>
+                    }
+
+
+                </div>
+            </div>
+
             <div className='table-activities'>
 
                 <table className="table  table-primary text-primary table-hover">
@@ -174,6 +244,7 @@ const ActivitiesList = (props) => {
                     </thead>
                     <tbody>
                         {
+                            
                             activities.map((activity, i) => {
                                 return <tr key={i} onClick={() => setActivity(activity)} data-bs-toggle="modal" data-bs-target="#exampleModal">
                                     <td>{activity.product}</td>
@@ -211,7 +282,7 @@ function Modal(props) {
                         </div>
                         <div className="d-flex  ">
                             <div className='m-2 '>
-                            <label htmlFor="" className="form-label">Produto</label>
+                                <label htmlFor="" className="form-label">Produto</label>
                                 <input type="text" value={props.activity.product} className="form-control" />
                             </div>
                             <div className='m-2 col-6'>
@@ -228,27 +299,27 @@ function Modal(props) {
 
                             <div className='m-2 d-flex col-6'>
                                 <div className='mx-1'>
-                                <label htmlFor="" className="form-label col-4">Frequência</label>
-                                <input type="number" value={props.activity.freq} className="form-control" />
+                                    <label htmlFor="" className="form-label col-4">Frequência</label>
+                                    <input type="number" value={props.activity.freq} className="form-control" />
                                 </div>
                                 <div className='mx-1'>
-                                <label htmlFor="" className="form-label">Paradas</label>
-                                <input type="number" value={props.activity.freq} className="form-control" />
+                                    <label htmlFor="" className="form-label">Paradas</label>
+                                    <input type="number" value={props.activity.freq} className="form-control" />
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="m-2">
                             <label htmlFor="" className="form-label">Realizada em:</label>
                         </div>
                         <div className="d-flex m-2 border p-4 flex-wrap">
                             {
-                                 Array(30).fill(0).map((v, i) => {
-                                     return <div className="form-check m-1" key={i}>
+                                Array(30).fill(0).map((v, i) => {
+                                    return <div className="form-check m-1" key={i}>
                                         <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
                                         <label className="form-check-label" for="flexCheckDefault">
-                                            {i+1}
-                                    </label>
+                                            {i + 1}
+                                        </label>
                                     </div>
                                 })
                             }
