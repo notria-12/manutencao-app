@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import Calender from './Calender'
 import { Switch, Route } from "react-router-dom";
 import ActivitiesList from '../ActivitiesList/ActivitiesList';
+import logo from '../../assets/images/sabao.png'
 
 function Home({ routes }) {
 
@@ -14,10 +15,14 @@ function Home({ routes }) {
     return (
         <div>
             <header>
-                <nav className="navbar bg-primary text-white">
-                    <h3>
+                <nav className="navbar bg-primary text-white d-flex justify-content-start">
+                    <div className='p-1'>
+                        <img src={logo} height={60}>
+                        </img>
+                    </div>
+                    {/* <h3>
                         Home
-                    </h3>
+                    </h3> */}
                 </nav>
             </header>
             <body>
@@ -28,11 +33,11 @@ function Home({ routes }) {
                             <ul>
                                 <li>
                                     {/* <a href="">Início</a> */}
-                                    <Link to='/home/calendar'>Cronograma</Link>
+                                    <Link to='/home/calendar'><i class="far fa-calendar-alt"></i> Cronograma</Link>
                                 </li>
                                 <li>
 
-                                    <Link to='/login'>Sair</Link>
+                                    <Link to='/login'><i class="fas fa-sign-out-alt"></i> Sair</Link>
                                 </li>
                             </ul>
                         </nav>

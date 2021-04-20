@@ -159,41 +159,57 @@ const ActivitiesList = (props) => {
     const [filterValue, setFilterValue] = useState('0')
     const [subFilter, setSubFilter] = useState('')
     const [filterValues, setFilterValues] = useState([])
-    const [auxActivities, setAuxActivities] = useState([])
+    const [auxActivities, setAuxActivities] = useState(activities)
 
     const changeMainFilter = (event) => {
         const value = event.target.value;
-        
+
         setFilterValue(value)
 
         switch (value) {
             case '1':
-                    setFilterValues(['SOPRADORA', 'CHILER', 'ROTULADORA', 'ENVASADORA'])
+                setFilterValues(['SOPRADORA', 'CHILER', 'ROTULADORA', 'ENVASADORA'])
                 break;
             case '2':
-                    setFilterValues(['Fulano', 'Ciclano', 'Beltrano'])
+                setFilterValues(['FULANO', 'CICLANO', 'BELTRANO'])
                 break;
             case '3':
-                   setFilterValues(['Á. Sanitária', 'S. Rajado', 'Desinfetante', 'S. Glicerinado', 'Multiuso', 'Detergente'] )
-                   break;
+                setFilterValues(['Á. Sanitária', 'S. Rajado', 'Desinfetante', 'S. Glicerinado', 'Multiuso', 'Detergente'])
+                break;
             default:
-                setSubFilter('')
+                setAuxActivities(activities)
                 break;
         }
-        
+
     }
 
     const changeSubFilter = (event) => {
         const value = event.target.value;
 
         setSubFilter(value);
-        
-        if(!subFilter.isEmpty()){
-            
+
+
+        switch (filterValue) {
+            case '1':
+                setAuxActivities(activities.filter(activity => activity.machine.toUpperCase() === value))
+                break;
+            case '2':
+                console.log(value)
+                setAuxActivities(activities.filter(activity => activity.tec.toUpperCase() === value))
+                break;
+            case '3':
+                setAuxActivities(activities.filter(activity => activity.product === value))
+                break;
+            default:
+                break;
         }
 
+
+
+
+
     }
-    
+
 
 
 
@@ -201,11 +217,14 @@ const ActivitiesList = (props) => {
     return (
         <div className='activities'>
             <div className='header-acitvities d-flex justify-content-between '>
-                <h3>Atividades do dia {date}</h3>
+                <button className='btn btn-primary m-2'>
+                <i class="fas fa-plus-circle"></i> Adicionar Atividade
+                </button>
+                <h3>{date}</h3>
 
                 <div className='filter-activities col-5 d-flex align-content-center m-2'>
                     <label className='form-label m-2 '>
-                        Filtrar:
+                        <i class="fas fa-filter"></i>
                     </label>
 
                     <select class="form-select mx-2" aria-label="Default select example" value={filterValue} onChange={changeMainFilter}>
@@ -216,15 +235,15 @@ const ActivitiesList = (props) => {
                     </select>
 
                     {
-                        filterValue !== '0' ? 
-                        <select class="form-select" aria-label="Default select example" value={subFilter} onChange={changeSubFilter}>
-                            {/* <option selected value="0">Selecione um filtro...</option> */}
-                           {
-                               filterValues.map( (filter, i) => {
-                                   return <option key={i}>{filter}</option>
-                               })
-                           }
-                        </select> : <div></div>
+                        filterValue !== '0' ?
+                            <select class="form-select" aria-label="Default select example" value={subFilter} onChange={changeSubFilter}>
+                                {/* <option selected value="0">Selecione um filtro...</option> */}
+                                {
+                                    filterValues.map((filter, i) => {
+                                        return <option key={i}>{filter}</option>
+                                    })
+                                }
+                            </select> : <div></div>
                     }
 
 
@@ -244,8 +263,8 @@ const ActivitiesList = (props) => {
                     </thead>
                     <tbody>
                         {
-                            
-                            activities.map((activity, i) => {
+
+                            auxActivities.map((activity, i) => {
                                 return <tr key={i} onClick={() => setActivity(activity)} data-bs-toggle="modal" data-bs-target="#exampleModal">
                                     <td>{activity.product}</td>
                                     <td>{activity.activity}</td>
