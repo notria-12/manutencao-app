@@ -15,10 +15,13 @@ function Home({ routes }) {
     return (
         <div>
             <header>
-                <nav className="navbar bg-primary text-white d-flex justify-content-start">
+                <nav className="navbar bg-primary text-white d-flex justify-content-between">
                     <div className='p-1'>
                         <img src={logo} height={60}>
                         </img>
+                    </div>
+                    <div className='p-1 m-2'>
+                        <Link><button className='btn btn-light text-primary rounded-circle'><span><i class="fas fa-bell"></i></span></button></Link>
                     </div>
                     {/* <h3>
                         Home
@@ -34,6 +37,10 @@ function Home({ routes }) {
                                 <li>
                                     {/* <a href="">Início</a> */}
                                     <Link to='/home/calendar'><i class="far fa-calendar-alt"></i> Cronograma</Link>
+                                </li>
+                                <li>
+
+                                    <Link to='/home/anomalies'><i class="fas fa-tools"></i> Anomalias</Link>
                                 </li>
                                 <li>
 

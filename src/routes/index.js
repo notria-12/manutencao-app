@@ -1,5 +1,5 @@
-import { Route } from "react-router-dom";
 import ActivitiesList from "../components/ActivitiesList/ActivitiesList";
+import Anomalies from "../components/Anomalies/Anomalies";
 import ChooseInput from "../components/ChooseInput/ChooseInput";
 import Home from "../components/Home";
 import Calender from "../components/Home/Calender";
@@ -23,6 +23,10 @@ const routes = [
             {
                 path:'/home/calendar',
                 component: Calender
+            },
+            {
+                path: '/home/anomalies',
+                component: Anomalies
             }
         ]
     }, 
