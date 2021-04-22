@@ -12,7 +12,10 @@ function Login() {
             </header> */}
 
             <body>
-                <main className="container">
+                <main className="container d-flex flex-column ">
+                    <div className='d-flex justify-content-start bg-primary col-6'>
+                        <Link to='/'><button className='btn text-white'><span><i className="fas fa-long-arrow-alt-left "></i> Voltar</span></button></Link>
+                    </div>
                     <div className="card col-6 p-3">
                         <div>
                             <h4 className="text-center">Bem vindo de volta</h4>
@@ -29,7 +32,7 @@ function Login() {
                             </div>
 
 
-                            <button className="w-100 btn btn-lg btn-primary mt-2" type="button"><Link to="/home/calendar">Entrar</Link></button>
+                            <Link to="/home/calendar"> <button className="w-100 btn btn-lg btn-primary mt-2" type="button">Entrar</button></Link>
 
                         </div>
 

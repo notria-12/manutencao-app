@@ -1,10 +1,13 @@
 import { Route } from "react-router-dom";
 import ActivitiesList from "../components/ActivitiesList/ActivitiesList";
+import ChooseInput from "../components/ChooseInput/ChooseInput";
 import Home from "../components/Home";
 import Calender from "../components/Home/Calender";
+import KeepingForm from "../components/KeepingForm/KeepingForm";
 import Login from "../components/Login";
 
 const routes = [
+  
     {
         path: '/login',
         component: Login
@@ -22,7 +25,16 @@ const routes = [
                 component: Calender
             }
         ]
-    }
+    }, 
+    {
+        path: '/keeping',
+        component: KeepingForm
+    },
+     {
+        path: '/',
+        component: ChooseInput
+    },
+   
 ]
 
 
