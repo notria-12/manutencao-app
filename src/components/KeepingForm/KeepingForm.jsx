@@ -13,10 +13,10 @@ const KeepingForm = () => {
             'item': 1
         },
         {
-            "activity":  'CORREIA DO SERVO DO ESTIRAMENTO: VERIFICAR A TENSÃO DA CORREIA, A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
+            "activity": 'CORREIA DO SERVO DO ESTIRAMENTO: VERIFICAR A TENSÃO DA CORREIA, A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
             "status": 3,
             "item": 2
-        }, 
+        },
         {
             "activity": 'CORREIA DA TRAÇÃO DO ESTIRAMENTO: VERIFICAR A TENSÃO DA CORREIA, A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
             "status": 3,
@@ -56,17 +56,30 @@ const KeepingForm = () => {
 
     const [current, setCurrent] = useState(0)
     const [disableBackButton, setDisableBackButton] = useState(false)
-    const [disableNextButton, setDisableNextButton] = useState(false)
+    const [isLastPage, setIsLastPage] = useState(false)
 
     useEffect(() => {
-        if(current < 4){
+        if (current < 4) {
             setDisableBackButton(true)
-        }else{
+        } else {
             setDisableBackButton(false)
+        }
+
+        if (current > (activities.length - 4)) {
+            setIsLastPage(true)
+        } else {
+            setIsLastPage(false)
         }
 
         // if(current >)
     }, [current]);
+
+
+    const addActivity = (activityDesc) =>{
+        const activity = { activity: activityDesc, item: activities.length+1, status: 3};
+
+        activities.push(activity);
+    }
 
     return (
         <div className='keeping-form'>
@@ -106,7 +119,7 @@ const KeepingForm = () => {
                             </div>
                         </div>
                         {
-                            activities.filter( activity => activity.item > current && activity.item <= (current+4)).map((activity, i) => {
+                            activities.filter(activity => activity.item > current && activity.item <= (current + 4)).map((activity, i) => {
                                 return <div className='card d-flex flex-row align-items-center m-1' key={i}>
                                     <div className='item-number'>
                                         <h5>{activity.item}</h5>
@@ -144,19 +157,56 @@ const KeepingForm = () => {
                                 </div>
                             })
                         }
+                        {
+                            isLastPage ? <button className='btn btn-primary m-2 ' data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <i className="fas fa-plus-circle "></i> Adicionar Atividade
+                            </button> : <div></div>
+                        }
+
 
                         <div className='d-flex justify-content-end'>
-                            <button className='btn btn-primary m-1' onClick={() =>{
-                                if(current > 3){
-                                    setCurrent(current-4)
+                            <button className='btn btn-primary m-1' onClick={() => {
+                                if (current > 3) {
+                                    setCurrent(current - 4)
                                 }
                             }} disabled={disableBackButton}>VOLTAR</button>
                             <button className='btn btn-primary m-1' onClick={() => {
-                                if(current < (activities.length - 4)){
-                                    setCurrent(current+4)
+                                if (current < (activities.length - 4)) {
+                                    setCurrent(current + 4)
                                 }
-                            }} disabled={disableNextButton}>AVANÇAR</button>
+                            }} >AVANÇAR</button>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <Modal addActivity={addActivity}>
+
+            </Modal>
+        </div>
+    )
+}
+
+function Modal(props) {
+    const [activityDesc, setActivityDesc] = useState('')
+
+    return (
+        <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="exampleModalLabel">Nova Atividade</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body">
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style={{height: '100px'}} value={activityDesc} onChange={ (e) => setActivityDesc(e.target.value)}></textarea>
+                            <label for="floatingTextarea2">Descrição</label>
+                        </div>
+
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" className="btn btn-primary" onClick={ props.addActivity(activityDesc)}>Salvar</button>
                     </div>
                 </div>
             </div>

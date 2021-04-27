@@ -21,7 +21,7 @@ function Home({ routes }) {
                         </img>
                     </div>
                     <div className='p-1 m-2'>
-                        <Link><button className='btn btn-light text-primary rounded-circle'><span><i class="fas fa-bell"></i></span></button></Link>
+                        <Link><button className='btn btn-light text-primary rounded-circle'><span><i className="fas fa-bell"></i></span></button></Link>
                     </div>
                     {/* <h3>
                         Home

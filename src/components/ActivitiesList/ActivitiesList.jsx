@@ -285,7 +285,7 @@ const ActivitiesList = (props) => {
 }
 
 function Modal(props) {
-    console.log('modal')
+    // console.log('modal')
     return (
         <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog">

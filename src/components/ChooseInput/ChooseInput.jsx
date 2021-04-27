@@ -5,6 +5,7 @@ import operador from '../../assets/images/operator.png'
 
 const ChooseInput = () =>{
     return (
+        
         <div className='container d-flex flex-wrap'>
             <div className='card col-4 m-2' >
                <div className='card-body p-2'>
