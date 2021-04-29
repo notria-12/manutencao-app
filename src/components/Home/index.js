@@ -35,17 +35,18 @@ function Home({ routes }) {
                         <nav>
                             <ul>
                                 <li>
-                                    {/* <a href="">Início</a> */}
                                     <Link to='/home/calendar'><i class="far fa-calendar-alt"></i> Cronograma</Link>
                                 </li>
                                 <li>
-
                                     <Link to='/home/anomalies'><i class="fas fa-tools"></i> Anomalias</Link>
                                 </li>
                                 <li>
-
+                                    <Link to='/login'><i class="fas fa-plus"></i> Cadastros</Link>
+                                </li>
+                                <li>
                                     <Link to='/login'><i class="fas fa-sign-out-alt"></i> Sair</Link>
                                 </li>
+
                             </ul>
                         </nav>
                     </div>
