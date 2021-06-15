@@ -3,9 +3,9 @@
 
 import './styles.css'
 import { Link } from 'react-router-dom'
-import Calender from './Calender'
+// import Calender from './Calender'
 import { Switch, Route } from "react-router-dom";
-import ActivitiesList from '../ActivitiesList/ActivitiesList';
+// import ActivitiesList from '../ActivitiesList/ActivitiesList';
 import logo from '../../assets/images/sabao.png'
 
 function Home({ routes }) {
