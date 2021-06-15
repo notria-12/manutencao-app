@@ -217,9 +217,7 @@ const ActivitiesList = (props) => {
     return (
         <div className='activities'>
             <div className='header-acitvities d-flex justify-content-between '>
-                <button className='btn btn-primary m-2'>
-                <i class="fas fa-plus-circle"></i> Adicionar Atividade
-                </button>
+              
                 <h3>{date}</h3>
 
                 <div className='filter-activities col-5 d-flex align-content-center m-2'>

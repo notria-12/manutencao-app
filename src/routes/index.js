@@ -5,6 +5,7 @@ import Home from "../components/Home";
 import Calender from "../components/Home/Calender";
 import KeepingForm from "../components/KeepingForm/KeepingForm";
 import Login from "../components/Login";
+import RegisterGeneral from "../components/RegisterGeneral/RegisterGeneral";
 
 const routes = [
   
@@ -27,6 +28,10 @@ const routes = [
             {
                 path: '/home/anomalies',
                 component: Anomalies
+            },
+            {
+                path: '/home/register',
+                component: RegisterGeneral
             }
         ]
     }, 

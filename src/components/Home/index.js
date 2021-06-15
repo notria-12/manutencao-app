@@ -41,7 +41,7 @@ function Home({ routes }) {
                                     <Link to='/home/anomalies'><i class="fas fa-tools"></i> Anomalias</Link>
                                 </li>
                                 <li>
-                                    <Link to='/login'><i class="fas fa-plus"></i> Cadastros</Link>
+                                    <Link to='/home/register'><i class="fas fa-plus"></i> Cadastros</Link>
                                 </li>
                                 <li>
                                     <Link to='/login'><i class="fas fa-sign-out-alt"></i> Sair</Link>
