@@ -191,17 +191,3 @@ function Modal(props) {
 }
 
 export default RegisterGeneral
-
-// {/* <div className='card'>
-//                   {/* <div className="card-header">
-//                       Novos cadastros
-//                   </div> */}
-//                 <div className="card-body">
-//                     <h5 className='card-title'>O que você deseja cadastrar?</h5>
-//                 <div>
-//                     <button className='btn btn-primary'><i class="fas fa-plus-circle"></i> Nova Máquina</button>
-//                     <button className='btn btn-primary m-2'><i class="fas fa-plus-circle"></i> Nova Atividade</button>
-//                     <button className='btn btn-primary'><i class="fas fa-plus-circle"></i> Nova Anomalia</button>
-//                 </div>
-//                 </div>
-//               </div> */}
