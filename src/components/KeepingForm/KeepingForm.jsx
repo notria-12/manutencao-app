@@ -158,7 +158,7 @@ const KeepingForm = () => {
                             })
                         }
                         {
-                            isLastPage ? <button className='btn btn-primary m-2 ' data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            isLastPage ? <button className='btn btn-primary m-2 ' data-bs-toggle="modal" data-bs-target="#addAnomally">
                                 <i className="fas fa-plus-circle "></i> Adicionar Atividade
                             </button> : <div></div>
                         }
@@ -190,7 +190,7 @@ function Modal(props) {
     const [activityDesc, setActivityDesc] = useState('')
 
     return (
-        <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal fade" id="addAnomally" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
