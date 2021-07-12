@@ -1,10 +1,12 @@
 
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
 import routes from "./routes/index";
 // import Routes from './Routes';
 
 function App() {
   return (
+    <AuthProvider>
     <BrowserRouter>
        <Switch>
          {
@@ -14,6 +16,7 @@ function App() {
          }
        </Switch>
     </BrowserRouter>
+    </AuthProvider>
   );
 }
 
