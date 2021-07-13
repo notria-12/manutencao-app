@@ -22,6 +22,7 @@ function App() {
 
 function RouteWithSubRoutes(route) {
   return (
+    // route.path.includes("/home") ? 
     <Route
       path={route.path}
       render={props => (
