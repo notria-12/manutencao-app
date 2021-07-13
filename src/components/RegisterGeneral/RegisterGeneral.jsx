@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
+import {db} from '../../firebase'
 
 const RegisterGeneral = (props) => {
     const [modalType, setType] = useState('machine');
     const [machines, setMachines] = useState(['SOPRADORA', 'ENVASADORA', 'CHILER']);
-    const [activities, setActivities] = useState(['FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.','INSPECIONAR CORRENTE INFERIOR'])
+    const [activities, setActivities] = useState([])
     const [anomalies, setAnomalies] = useState(['CORREIA DA TRAÇÃO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.', 'ALINHAMENTO RÉGUA/ PRENSA: COM A PRENSA FECHADA VERIFICAR A CENTRALIZAÇÃO DA RÉGUA NO MOLDE.'])
 
     const addMachine = (machineDesc) =>{
@@ -13,14 +14,22 @@ const RegisterGeneral = (props) => {
         console.log('MACHINES:', machines)
     }
 
-    const addActivity = (activityDesc) => {
-        setActivities([activityDesc, ...activities])
-
-    }
+    
 
     const addAnomally = (anomallyDesc) => {
         setAnomalies([anomallyDesc, ...anomalies])
     }
+
+   
+
+    useEffect( () => {
+       const unsubscribe = db.collection('activities').onSnapshot(snapshot => setActivities(snapshot.docs.map(doc => doc.data())))
+
+       return () => {
+           unsubscribe()
+       }
+        
+    },[])
 
 
 
@@ -75,7 +84,7 @@ const RegisterGeneral = (props) => {
                                     activities.map((activity, i) =>{
                                         return(
                                             <tr key={i}>
-                                                <td>{activity}</td>
+                                                <td>{activity.description}</td>
                                                 <td>
                                                     <div>
                                                         <button className='btn p-1'><i className="far fa-trash-alt"></i></button>
@@ -88,7 +97,7 @@ const RegisterGeneral = (props) => {
                                 }
                             </tbody>
                         </table>
-                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => setType('Atividade')}><i class="fas fa-plus-circle"></i> Nova Atividade</button>
+                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addActivity"><i class="fas fa-plus-circle"></i> Nova Atividade</button>
                     </div>
                     <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
                     <table className='table table-primary'>
@@ -117,15 +126,22 @@ const RegisterGeneral = (props) => {
                         <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => setType('Anomalia')}><i class="fas fa-plus-circle"></i> Nova Anomalia</button>
                     </div>
                 </div>
-                <Modal addMachine={addMachine} addActivity={addActivity} addAnomally={addAnomally} type={modalType}>
+                <Modal addMachine={addMachine}  addAnomally={addAnomally} type={modalType}>
 
                 </Modal>
+                <ActivityModal>
+
+                </ActivityModal>
         </div>
     );
 }
 
 function Modal(props) {
     const [desc, setDesc] = useState('')
+
+    async function handleSave(){
+        
+    }
 
     return (
         <div className="modal fade" id="addAnomally" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -154,13 +170,13 @@ function Modal(props) {
                                         
                                      }
                                     break;
-                                case 'Atividade':
-                                    if(desc !== ''){
-                                        props.addActivity(desc)
-                                       clearModal()
+                                // case 'Atividade':
+                                //     if(desc !== ''){
+                                //         props.addActivity(desc)
+                                //        clearModal()
                                         
-                                     }
-                                     break;
+                                //      }
+                                //      break;
                                 case 'Anomalia':
                                     if(desc !== ''){
                                         props.addAnomally(desc)
@@ -188,6 +204,100 @@ function Modal(props) {
         bottonSave.click()
         bottonSave.removeAttribute('data-bs-dismiss')
     }
+}
+
+function ActivityModal(props) {
+    // console.log('modal')
+    let activityNameRef = useRef();
+    let productRef = useRef();
+    let freqRef = useRef();
+    let techRef = useRef();
+    let stopsRef = useRef();
+
+    function clearModal(){
+        
+        var bottonSave = document.getElementById('saveButton2');
+                                        
+        bottonSave.setAttribute('data-bs-dismiss', 'modal')
+        bottonSave.click()
+        bottonSave.removeAttribute('data-bs-dismiss')
+    }
+
+
+    async function handleSave(){
+        const activityRef = db.collection('activities');
+        let activity= {description: activityNameRef.current.value, product: productRef.current.value, frequency: freqRef.current.value, tech: techRef.current.value, stops: stopsRef.current.value, createdAt: Date.now()}
+
+        await activityRef.doc().set(activity);
+        // clearModal();
+    }
+    
+    return (
+        <div className="modal fade" id="addActivity" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="exampleModalLabel">Descrição da Atividade</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body">
+                        <div className='m-2'>
+                            <label htmlFor="" className="form-label">Atividade</label>
+                            <input type="text"  className="form-control" ref={activityNameRef}/>
+                        </div>
+                        <div className="d-flex  ">
+                            <div className='m-2 '>
+                                <label htmlFor="" className="form-label">Produto</label>
+                                <input type="text"  className="form-control" ref={productRef} />
+                            </div>
+                            <div className='m-2 d-flex col-6'>
+                                <div className='mx-1'>
+                                    <label htmlFor="" className="form-label col-4">Frequência</label>
+                                    <input type="number"  className="form-control" ref={freqRef}/>
+                                </div>
+                                <div className='mx-1'>
+                                    <label htmlFor="" className="form-label">Paradas</label>
+                                    <input type="number"  className="form-control" ref={stopsRef}/>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div className="d-flex">
+                            <div className='m-2'>
+                                <label htmlFor="" className="form-label">Técnico</label>
+                                <input type="text"  className="form-control" ref={techRef} />
+                            </div>
+
+                            
+                        </div>
+
+                        {/* <div className="m-2">
+                            <label htmlFor="" className="form-label">Realizada em:</label>
+                        </div>
+                        <div className="d-flex m-2 border p-4 flex-wrap">
+                            {
+                                Array(30).fill(0).map((v, i) => {
+                                    return <div className="form-check m-1" key={i}>
+                                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                                        <label className="form-check-label" for="flexCheckDefault">
+                                            {i + 1}
+                                        </label>
+                                    </div>
+                                })
+                            }
+                        </div> */}
+
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" className="btn btn-primary" onClick={() => {
+                            handleSave()
+                        }} id='saveButton2'>Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default RegisterGeneral
