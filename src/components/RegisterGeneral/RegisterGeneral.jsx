@@ -140,7 +140,7 @@ const RegisterGeneral = (props) => {
 
 function Modal(props) {
     const [desc, setDesc] = useState('')
-
+   
     return (
         <div className="modal fade" id="addAnomally" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog">
@@ -190,7 +190,11 @@ function Modal(props) {
 
     function clearModal(){
         setDesc('');
-        // var bottonSave = document.getElementById('saveButton');
+        
+     
+        var modal = document.getElementById('addAnomally');
+        modal.removeAttribute("tabindex")
+        modal.hidden = true
                                         
         // bottonSave.setAttribute('data-bs-dismiss', 'modal')
         // bottonSave.click()
