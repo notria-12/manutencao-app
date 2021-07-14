@@ -3,30 +3,32 @@ import {db} from '../../firebase'
 
 const RegisterGeneral = (props) => {
     const [modalType, setType] = useState('machine');
-    const [machines, setMachines] = useState(['SOPRADORA', 'ENVASADORA', 'CHILER']);
+    const [machines, setMachines] = useState([]);
     const [activities, setActivities] = useState([])
-    const [anomalies, setAnomalies] = useState(['CORREIA DA TRAÇÃO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.', 'ALINHAMENTO RÉGUA/ PRENSA: COM A PRENSA FECHADA VERIFICAR A CENTRALIZAÇÃO DA RÉGUA NO MOLDE.'])
+    const [anomalies, setAnomalies] = useState([])
 
-    const addMachine = (machineDesc) =>{
+    const addMachine = async (machineDesc) => {
+        await db.collection('machines').doc().set({"description": machineDesc})
 
-        console.log(machineDesc)
-        setMachines([machineDesc, ...machines])
-        console.log('MACHINES:', machines)
     }
 
     
 
-    const addAnomally = (anomallyDesc) => {
-        setAnomalies([anomallyDesc, ...anomalies])
+    const addAnomally = async (anomallyDesc) => {
+        await db.collection('anomalies').doc().set({"description": anomallyDesc})
     }
 
    
 
     useEffect( () => {
-       const unsubscribe = db.collection('activities').onSnapshot(snapshot => setActivities(snapshot.docs.map(doc => doc.data())))
+       const unsubscribeActivity = db.collection('activities').onSnapshot(snapshot => setActivities(snapshot.docs.map(doc => doc.data())))
+    const unsubscribeMachine = db.collection('machines').onSnapshot(snapshot => setMachines(snapshot.docs.map(doc => doc.data())));
+    const unsubscribeAomally = db.collection('anomalies').onSnapshot(snapshot => setAnomalies(snapshot.docs.map(doc => doc.data())));
 
        return () => {
-           unsubscribe()
+           unsubscribeActivity()
+           unsubscribeMachine()
+           unsubscribeAomally()
        }
         
     },[])
@@ -58,7 +60,7 @@ const RegisterGeneral = (props) => {
                                     machines.map((machine, i) =>{
                                         return(
                                             <tr key={i}>
-                                                <td>{machine}</td>
+                                                <td>{machine.description}</td>
                                                 <td>
                                                     <div>
                                                         <button className='btn p-1'><i className="far fa-trash-alt"></i></button>
@@ -110,7 +112,7 @@ const RegisterGeneral = (props) => {
                                     anomalies.map((anomally, i) =>{
                                         return(
                                             <tr key={i}>
-                                                <td>{anomally}</td>
+                                                <td>{anomally.description}</td>
                                                 <td>
                                                     <div>
                                                         <button className='btn p-1'><i className="far fa-trash-alt"></i></button>
@@ -126,11 +128,11 @@ const RegisterGeneral = (props) => {
                         <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => setType('Anomalia')}><i class="fas fa-plus-circle"></i> Nova Anomalia</button>
                     </div>
                 </div>
+                
                 <Modal addMachine={addMachine}  addAnomally={addAnomally} type={modalType}>
-
                 </Modal>
+                
                 <ActivityModal>
-
                 </ActivityModal>
         </div>
     );
@@ -138,10 +140,6 @@ const RegisterGeneral = (props) => {
 
 function Modal(props) {
     const [desc, setDesc] = useState('')
-
-    async function handleSave(){
-        
-    }
 
     return (
         <div className="modal fade" id="addAnomally" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -164,19 +162,13 @@ function Modal(props) {
                             
                             switch (props.type) {
                                 case 'Máquina':
-                                    if(desc !== ''){
+                                    if(desc !== '') {
                                         props.addMachine(desc)
                                         clearModal()
                                         
                                      }
                                     break;
-                                // case 'Atividade':
-                                //     if(desc !== ''){
-                                //         props.addActivity(desc)
-                                //        clearModal()
-                                        
-                                //      }
-                                //      break;
+                  
                                 case 'Anomalia':
                                     if(desc !== ''){
                                         props.addAnomally(desc)
@@ -198,11 +190,11 @@ function Modal(props) {
 
     function clearModal(){
         setDesc('');
-        var bottonSave = document.getElementById('saveButton');
+        // var bottonSave = document.getElementById('saveButton');
                                         
-        bottonSave.setAttribute('data-bs-dismiss', 'modal')
-        bottonSave.click()
-        bottonSave.removeAttribute('data-bs-dismiss')
+        // bottonSave.setAttribute('data-bs-dismiss', 'modal')
+        // bottonSave.click()
+        // bottonSave.removeAttribute('data-bs-dismiss')
     }
 }
 
@@ -215,27 +207,35 @@ function ActivityModal(props) {
     let stopsRef = useRef();
 
     function clearModal(){
+        activityNameRef.current.value = ''
         
-        var bottonSave = document.getElementById('saveButton2');
+        // var bottonSave = document.getElementById('saveButton2');
                                         
-        bottonSave.setAttribute('data-bs-dismiss', 'modal')
-        bottonSave.click()
-        bottonSave.removeAttribute('data-bs-dismiss')
+        // bottonSave.setAttribute('data-bs-dismiss', 'modal')
+        // bottonSave.click()
+        // bottonSave.removeAttribute('data-bs-dismiss')
     }
 
 
     async function handleSave(){
         const activityRef = db.collection('activities');
-        let activity= {description: activityNameRef.current.value, product: productRef.current.value, frequency: freqRef.current.value, tech: techRef.current.value, stops: stopsRef.current.value, createdAt: Date.now()}
+        
 
-        await activityRef.doc().set(activity);
-        // clearModal();
+        if( activityNameRef.current.value !== "" &&  productRef.current.value !== "" && freqRef.current.value !== "" &&  stopsRef.current.value ){
+
+            let activity= {description: activityNameRef.current.value, product: productRef.current.value, frequency: freqRef.current.value, tech: techRef.current.value, stops: stopsRef.current.value, createdAt: Date.now()}
+    
+            await activityRef.doc().set(activity);
+        }else{
+            console.log('Preencha os dados corretamente');
+        }
+        clearModal();
     }
     
     return (
         <div className="modal fade" id="addActivity" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog">
-                <div className="modal-content">
+                <form className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title" id="exampleModalLabel">Descrição da Atividade</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -243,21 +243,21 @@ function ActivityModal(props) {
                     <div className="modal-body">
                         <div className='m-2'>
                             <label htmlFor="" className="form-label">Atividade</label>
-                            <input type="text"  className="form-control" ref={activityNameRef}/>
+                            <input type="text"  className="form-control" ref={activityNameRef} required/>
                         </div>
                         <div className="d-flex  ">
                             <div className='m-2 '>
                                 <label htmlFor="" className="form-label">Produto</label>
-                                <input type="text"  className="form-control" ref={productRef} />
+                                <input type="text"  className="form-control" ref={productRef} required/>
                             </div>
                             <div className='m-2 d-flex col-6'>
                                 <div className='mx-1'>
                                     <label htmlFor="" className="form-label col-4">Frequência</label>
-                                    <input type="number"  className="form-control" ref={freqRef}/>
+                                    <input type="number"  className="form-control" ref={freqRef} required/>
                                 </div>
                                 <div className='mx-1'>
                                     <label htmlFor="" className="form-label">Paradas</label>
-                                    <input type="number"  className="form-control" ref={stopsRef}/>
+                                    <input type="number"  className="form-control" ref={stopsRef} required/>
                                 </div>
                             </div>
 
@@ -265,7 +265,7 @@ function ActivityModal(props) {
                         <div className="d-flex">
                             <div className='m-2'>
                                 <label htmlFor="" className="form-label">Técnico</label>
-                                <input type="text"  className="form-control" ref={techRef} />
+                                <input type="text"  className="form-control" ref={techRef} required/>
                             </div>
 
                             
@@ -290,11 +290,9 @@ function ActivityModal(props) {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" className="btn btn-primary" onClick={() => {
-                            handleSave()
-                        }} id='saveButton2'>Salvar</button>
+                        <button type="button" className="btn btn-primary"  onClick={handleSave} id="saveButton2" >Salvar</button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     )
