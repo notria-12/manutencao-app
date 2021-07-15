@@ -12,6 +12,14 @@ const RegisterGeneral = (props) => {
 
     }
 
+    const removeMachine = async(idMachine) => {
+        await db.collection('machines').doc(idMachine).delete()
+    }
+
+    const editMachine = async (machine) => {
+        await db.collection('machines').doc(machine.id).update({"description": machine.description});
+    }
+
     
 
     const addAnomally = async (anomallyDesc) => {
@@ -21,9 +29,9 @@ const RegisterGeneral = (props) => {
    
 
     useEffect( () => {
-       const unsubscribeActivity = db.collection('activities').onSnapshot(snapshot => setActivities(snapshot.docs.map(doc => doc.data())))
-    const unsubscribeMachine = db.collection('machines').onSnapshot(snapshot => setMachines(snapshot.docs.map(doc => doc.data())));
-    const unsubscribeAomally = db.collection('anomalies').onSnapshot(snapshot => setAnomalies(snapshot.docs.map(doc => doc.data())));
+       const unsubscribeActivity = db.collection('activities').onSnapshot(snapshot => setActivities(snapshot.docs.map(doc => { return {...doc.data(), "id": doc.id}})))
+    const unsubscribeMachine = db.collection('machines').onSnapshot(snapshot => setMachines(snapshot.docs.map(doc => { return {...doc.data(), "id": doc.id}})));
+    const unsubscribeAomally = db.collection('anomalies').onSnapshot(snapshot => setAnomalies(snapshot.docs.map(doc => { return {...doc.data(), "id": doc.id}})));
 
        return () => {
            unsubscribeActivity()
@@ -63,8 +71,8 @@ const RegisterGeneral = (props) => {
                                                 <td>{machine.description}</td>
                                                 <td>
                                                     <div>
-                                                        <button className='btn p-1'><i className="far fa-trash-alt"></i></button>
-                                                        <button className='btn p-1'><i className="far fa-edit"></i></button>
+                                                        <button className='btn p-1' onClick={() => removeMachine(machine.id)}><i className="far fa-trash-alt"></i></button>
+                                                        <button className='btn p-1' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => setType('Edição de Máquina')}><i className="far fa-edit"></i></button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -146,7 +154,7 @@ function Modal(props) {
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title" id="exampleModalLabel">Nova {props.type}</h5>
+                        <h5 className="modal-title" id="exampleModalLabel">{props.type}</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
@@ -168,7 +176,9 @@ function Modal(props) {
                                         
                                      }
                                     break;
-                  
+                                case 'Edição de Máquina':
+
+                                    break;
                                 case 'Anomalia':
                                     if(desc !== ''){
                                         props.addAnomally(desc)
@@ -194,7 +204,7 @@ function Modal(props) {
      
         var modal = document.getElementById('addAnomally');
         modal.removeAttribute("tabindex")
-        modal.hidden = true
+        // modal.hidden = true
                                         
         // bottonSave.setAttribute('data-bs-dismiss', 'modal')
         // bottonSave.click()
