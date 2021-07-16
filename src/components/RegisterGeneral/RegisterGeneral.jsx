@@ -2,31 +2,27 @@ import React, {useEffect, useRef, useState} from 'react';
 import {db} from '../../firebase'
 
 const RegisterGeneral = (props) => {
-    const [modalType, setType] = useState('machine');
-    const [machines, setMachines] = useState(['SOPRADORA', 'ENVASADORA', 'CHILER']);
+    const [modalType, setType] = useState();
+    const [machines, setMachines] = useState([]);
     const [activities, setActivities] = useState([])
-    const [anomalies, setAnomalies] = useState(['CORREIA DA TRAÇÃO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.', 'ALINHAMENTO RÉGUA/ PRENSA: COM A PRENSA FECHADA VERIFICAR A CENTRALIZAÇÃO DA RÉGUA NO MOLDE.'])
-
-    const addMachine = (machineDesc) =>{
-
-        console.log(machineDesc)
-        setMachines([machineDesc, ...machines])
-        console.log('MACHINES:', machines)
-    }
-
+    const [machine, setMachine] = useState();
     
 
-    const addAnomally = (anomallyDesc) => {
-        setAnomalies([anomallyDesc, ...anomalies])
+  
+
+    const removeMachine = async(idMachine) => {
+        await db.collection('machines').doc(idMachine).delete()
     }
 
-   
+       
 
     useEffect( () => {
-       const unsubscribe = db.collection('activities').onSnapshot(snapshot => setActivities(snapshot.docs.map(doc => doc.data())))
+       const unsubscribeActivity = db.collection('activities').onSnapshot(snapshot => setActivities(snapshot.docs.map(doc => { return {...doc.data(), "id": doc.id}})))
+    const unsubscribeMachine = db.collection('machines').onSnapshot(snapshot => setMachines(snapshot.docs.map(doc => { return {...doc.data(), "id": doc.id}})));
 
        return () => {
-           unsubscribe()
+           unsubscribeActivity()
+           unsubscribeMachine()
        }
         
     },[])
@@ -42,15 +38,13 @@ const RegisterGeneral = (props) => {
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Atividades</button>
                     </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Anomalias</button>
-                    </li>
                 </ul>
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                         <table className='table table-primary'>
                             <thead className='header'>
                                 <th>Descrição</th>
+                                <th>Linha de Produção</th>
                                 <th>Ação</th>
                             </thead>
                             <tbody>
@@ -58,11 +52,12 @@ const RegisterGeneral = (props) => {
                                     machines.map((machine, i) =>{
                                         return(
                                             <tr key={i}>
-                                                <td>{machine}</td>
+                                                <td>{machine.description}</td>
+                                                <td>{machine.product}</td>
                                                 <td>
                                                     <div>
-                                                        <button className='btn p-1'><i className="far fa-trash-alt"></i></button>
-                                                        <button className='btn p-1'><i className="far fa-edit"></i></button>
+                                                        <button className='btn p-1' onClick={() => removeMachine(machine.id)}><i className="far fa-trash-alt"></i></button>
+                                                        <button className='btn p-1' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => {setMachine(machine); setType(1); }}><i className="far fa-edit"></i></button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -71,12 +66,13 @@ const RegisterGeneral = (props) => {
                                 }
                             </tbody>
                         </table>
-                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => setType('Máquina')}><i class="fas fa-plus-circle"></i> Nova Máquina</button>
+                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => {setType(0); setMachine(undefined);}}><i class="fas fa-plus-circle"></i> Nova Máquina</button>
                     </div>
                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <table className='table table-primary'>
                             <thead className='header'>
                                 <th>Descrição</th>
+                                <th>Linha de Produção</th>
                                 <th>Ação</th>
                             </thead>
                             <tbody>
@@ -85,12 +81,14 @@ const RegisterGeneral = (props) => {
                                         return(
                                             <tr key={i}>
                                                 <td>{activity.description}</td>
+                                                <td>{activity.product}</td>
                                                 <td>
                                                     <div>
                                                         <button className='btn p-1'><i className="far fa-trash-alt"></i></button>
                                                         <button className='btn p-1'><i className="far fa-edit"></i></button>
                                                     </div>
                                                 </td>
+                                                
                                             </tr>
                                         )
                                     })
@@ -99,59 +97,56 @@ const RegisterGeneral = (props) => {
                         </table>
                         <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addActivity"><i class="fas fa-plus-circle"></i> Nova Atividade</button>
                     </div>
-                    <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
-                    <table className='table table-primary'>
-                            <thead className='header'>
-                                <th>Descrição</th>
-                                <th>Ação</th>
-                            </thead>
-                            <tbody>
-                                {
-                                    anomalies.map((anomally, i) =>{
-                                        return(
-                                            <tr key={i}>
-                                                <td>{anomally}</td>
-                                                <td>
-                                                    <div>
-                                                        <button className='btn p-1'><i className="far fa-trash-alt"></i></button>
-                                                        <button className='btn p-1'><i className="far fa-edit"></i></button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        )
-                                    })
-                                }
-                            </tbody>
-                        </table>
-                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => setType('Anomalia')}><i class="fas fa-plus-circle"></i> Nova Anomalia</button>
-                    </div>
+                   
                 </div>
-                <Modal addMachine={addMachine}  addAnomally={addAnomally} type={modalType}>
-
+                
+                <Modal  type={modalType} machine={machine}>
                 </Modal>
+                
                 <ActivityModal>
-
                 </ActivityModal>
         </div>
     );
 }
 
 function Modal(props) {
-    const [desc, setDesc] = useState('')
+    const [desc, setDesc] = useState(props.machine ? props.machine.description: '1');
+    const [product, setProduct] = useState('');
+    const [nSerie, setNSerie] = useState('');
 
-    async function handleSave(){
-        
+    // setDesc(props.machine ? props.machine.description: '1')
+
+    const editMachine = async () => {
+        await db.collection('machines').doc(props.machine.id).update({"description":desc, "product": product, 'n_serie': nSerie});
     }
 
+    const addMachine = async () => {
+        await db.collection('machines').doc().set({"description": desc, "product": product, 'n_serie': nSerie})
+
+    }
+   
     return (
+        
         <div className="modal fade" id="addAnomally" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title" id="exampleModalLabel">Nova {props.type}</h5>
+                        <h5 className="modal-title" id="exampleModalLabel">{props.type === 0 ? 'Nova Máquina': 'Edição de Máquina'}</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
+                    <div className="d-flex my-2 justify-content-between ">
+                            <div className=''>
+                                <label htmlFor="" className="form-label">Produto</label>
+                                <input type="text"  className="form-control"  value={product} onChange={(e) => setProduct(e.target.value)} required/>
+                            </div>
+                            
+                            <div >
+                                <label htmlFor="" className="form-label " >N° Série</label>
+                                <input type="text"  className="form-control" value={nSerie} onChange={(e) => setNSerie(e.target.value)} required/>
+                            </div>                          
+
+                    </div>
                         <div class="form-floating">
                             <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style={{height: '100px'}} value={desc} onChange={(e) => setDesc(e.target.value)}></textarea>
                             <label for="floatingTextarea2">Descrição</label>
@@ -163,27 +158,22 @@ function Modal(props) {
                         <button type="button" className="btn btn-primary" id='saveButton' onClick={() =>{
                             
                             switch (props.type) {
-                                case 'Máquina':
-                                    if(desc !== ''){
-                                        props.addMachine(desc)
+                                case 0:
+                                    if(desc !== '') {
+                                        addMachine()
                                         clearModal()
                                         
                                      }
                                     break;
-                                // case 'Atividade':
-                                //     if(desc !== ''){
-                                //         props.addActivity(desc)
-                                //        clearModal()
-                                        
-                                //      }
-                                //      break;
-                                case 'Anomalia':
-                                    if(desc !== ''){
-                                        props.addAnomally(desc)
+                                case 1:
+                                    if(desc !== '') {
+                                        editMachine()
                                         clearModal()
                                         
                                      }
-                                     break;
+
+                                    break;
+                             
                             
                                 default:
                                     break;
@@ -198,11 +188,15 @@ function Modal(props) {
 
     function clearModal(){
         setDesc('');
-        var bottonSave = document.getElementById('saveButton');
+        setProduct('');
+        setNSerie('');
+     
+        
+        // modal.hidden = true
                                         
-        bottonSave.setAttribute('data-bs-dismiss', 'modal')
-        bottonSave.click()
-        bottonSave.removeAttribute('data-bs-dismiss')
+        // bottonSave.setAttribute('data-bs-dismiss', 'modal')
+        // bottonSave.click()
+        // bottonSave.removeAttribute('data-bs-dismiss')
     }
 }
 
@@ -215,27 +209,35 @@ function ActivityModal(props) {
     let stopsRef = useRef();
 
     function clearModal(){
+        activityNameRef.current.value = ''
         
-        var bottonSave = document.getElementById('saveButton2');
+        // var bottonSave = document.getElementById('saveButton2');
                                         
-        bottonSave.setAttribute('data-bs-dismiss', 'modal')
-        bottonSave.click()
-        bottonSave.removeAttribute('data-bs-dismiss')
+        // bottonSave.setAttribute('data-bs-dismiss', 'modal')
+        // bottonSave.click()
+        // bottonSave.removeAttribute('data-bs-dismiss')
     }
 
 
     async function handleSave(){
         const activityRef = db.collection('activities');
-        let activity= {description: activityNameRef.current.value, product: productRef.current.value, frequency: freqRef.current.value, tech: techRef.current.value, stops: stopsRef.current.value, createdAt: Date.now()}
+        
 
-        await activityRef.doc().set(activity);
-        // clearModal();
+        if( activityNameRef.current.value !== "" &&  productRef.current.value !== "" && freqRef.current.value !== "" &&  stopsRef.current.value ){
+
+            let activity= {description: activityNameRef.current.value, product: productRef.current.value, frequency: freqRef.current.value, tech: techRef.current.value, stops: stopsRef.current.value, createdAt: Date.now()}
+    
+            await activityRef.doc().set(activity);
+        }else{
+            console.log('Preencha os dados corretamente');
+        }
+        clearModal();
     }
     
     return (
         <div className="modal fade" id="addActivity" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog">
-                <div className="modal-content">
+                <form className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title" id="exampleModalLabel">Descrição da Atividade</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -243,21 +245,21 @@ function ActivityModal(props) {
                     <div className="modal-body">
                         <div className='m-2'>
                             <label htmlFor="" className="form-label">Atividade</label>
-                            <input type="text"  className="form-control" ref={activityNameRef}/>
+                            <input type="text"  className="form-control" ref={activityNameRef} required/>
                         </div>
                         <div className="d-flex  ">
                             <div className='m-2 '>
                                 <label htmlFor="" className="form-label">Produto</label>
-                                <input type="text"  className="form-control" ref={productRef} />
+                                <input type="text"  className="form-control" ref={productRef} required/>
                             </div>
                             <div className='m-2 d-flex col-6'>
                                 <div className='mx-1'>
                                     <label htmlFor="" className="form-label col-4">Frequência</label>
-                                    <input type="number"  className="form-control" ref={freqRef}/>
+                                    <input type="number"  className="form-control" ref={freqRef} required/>
                                 </div>
                                 <div className='mx-1'>
                                     <label htmlFor="" className="form-label">Paradas</label>
-                                    <input type="number"  className="form-control" ref={stopsRef}/>
+                                    <input type="number"  className="form-control" ref={stopsRef} required/>
                                 </div>
                             </div>
 
@@ -265,7 +267,7 @@ function ActivityModal(props) {
                         <div className="d-flex">
                             <div className='m-2'>
                                 <label htmlFor="" className="form-label">Técnico</label>
-                                <input type="text"  className="form-control" ref={techRef} />
+                                <input type="text"  className="form-control" ref={techRef} required/>
                             </div>
 
                             
@@ -290,11 +292,9 @@ function ActivityModal(props) {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" className="btn btn-primary" onClick={() => {
-                            handleSave()
-                        }} id='saveButton2'>Salvar</button>
+                        <button type="button" className="btn btn-primary"  onClick={handleSave} id="saveButton2" >Salvar</button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     )
