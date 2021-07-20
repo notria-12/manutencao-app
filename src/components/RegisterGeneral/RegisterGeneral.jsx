@@ -220,10 +220,12 @@ function Modal(props) {
 function ActivityModal(props) {
     // console.log('modal')
     let activityNameRef = useRef();
-    let productRef = useRef();
+    let machineRef = useRef();
     let freqRef = useRef();
     let techRef = useRef();
     let stopsRef = useRef();
+    let lubricant = useRef();
+    const [value, setValue] = useState();
 
     function clearModal(){
         activityNameRef.current.value = ''
@@ -239,10 +241,11 @@ function ActivityModal(props) {
     async function handleSave(){
         const activityRef = db.collection('activities');
         
+        
+        console.log( machineRef.current.value)
+        if( activityNameRef.current.value !== "" &&  machineRef.current.value !== "" && freqRef.current.value !== "" &&  stopsRef.current.value ){
 
-        if( activityNameRef.current.value !== "" &&  productRef.current.value !== "" && freqRef.current.value !== "" &&  stopsRef.current.value ){
-
-            let activity= {description: activityNameRef.current.value, product: productRef.current.value, frequency: freqRef.current.value, tech: techRef.current.value, stops: stopsRef.current.value, createdAt: Date.now()}
+            let activity= {description: activityNameRef.current.value, machine: machineRef.current.value, frequency: freqRef.current.value, tech: techRef.current.value, createdAt: Date.now(), type: value, lubricant: lubricant.current.value}
     
             await activityRef.doc().set(activity);
         }else{
@@ -267,11 +270,11 @@ function ActivityModal(props) {
                         <div >
                             <div className='m-2 '>
                                 <label htmlFor="" className="form-label">Máquina - Linha - Setor</label>
-                                <select class="form-select" aria-label="Default select example">
-                                    <option selected>Selecione uma máquina</option>
+                                <select class="form-select" aria-label="Default select example" ref={machineRef} >
+                                    <option selected value="">Selecione uma máquina</option>
                                     {props.machines.map((machine, i) => {
                                         return (
-                                            <option value={i}>{machine.description+' - '+ machine.product +' - '+ machine.sector}</option>
+                                            <option value={machine.id}>{machine.description+' - '+ machine.product +' - '+ machine.sector}</option>
                                         )
                                         
                                     })}
@@ -279,6 +282,7 @@ function ActivityModal(props) {
                                 </select>
                                
                             </div>
+                           
                           
                             {/* <div className='m-2 d-flex col-6'>
                                 <div className='mx-1'>
@@ -292,22 +296,37 @@ function ActivityModal(props) {
                             </div> */}
 
                         </div>
-                        <div className="d-flex m-2 justify-content-between">
-                            <div className="col-6 mx-1">
+                        <div className="d-flex m-2 ">
+                            <div className="col-6">
                                 <label htmlFor="" className="form-label">Tipo de Manutenção</label>
-                                <select class="form-select" aria-label="Default select example">
+                                <select className="form-select" aria-label="Default select example" onChange={(e) => setValue(e.target.value)}>
                                     <option selected>Selecione o tipo</option>
-                                    <option value="1">MECÂNICA</option>
-                                    <option value="2">LUBRIFICAÇÃO</option>
-                                    <option value="3">ElÉTRICA</option>
+                                    <option value="MECÂNICA">MECÂNICA</option>
+                                    <option value="LUBRIFICAÇÃO">LUBRIFICAÇÃO</option>
+                                    <option value="ElÉTRICA">ElÉTRICA</option>
                                 </select>
                             </div>
-                            <div className="col-6" >
+                            <div className="mx-1" >
                                 <label htmlFor="" className="form-label">Técnico</label>
                                 <input type="text"  className="form-control" ref={techRef} required/>
                             </div>
 
                             
+                        </div>
+                        <div className="d-flex m-2">
+                            <div className='col-6'>
+                                <div className=''>
+                                    <label htmlFor="" className="form-label col-4">Frequência</label>
+                                    <input type="number"  className="form-control" ref={freqRef} required/>
+                                </div>
+                                
+                            </div>
+                            {
+                                value === 'LUBRIFICAÇÃO' ?  <div className="mx-1 " >
+                                <label htmlFor="" className="form-label">Lubrificante</label>
+                                <input type="text"  className="form-control" ref={lubricant} required/>
+                            </div>: <div></div>
+                            }
                         </div>
 
                         {/* <div className="m-2">
