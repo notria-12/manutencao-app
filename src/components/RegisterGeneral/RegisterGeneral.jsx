@@ -45,6 +45,7 @@ const RegisterGeneral = (props) => {
                             <thead className='header'>
                                 <th>Descrição</th>
                                 <th>Linha de Produção</th>
+                                <th>Setor</th>
                                 <th>Ação</th>
                             </thead>
                             <tbody>
@@ -54,6 +55,7 @@ const RegisterGeneral = (props) => {
                                             <tr key={i}>
                                                 <td>{machine.description}</td>
                                                 <td>{machine.product}</td>
+                                                <td>{machine.sector}</td>
                                                 <td>
                                                     <div>
                                                         <button className='btn p-1' onClick={() => removeMachine(machine.id)}><i className="far fa-trash-alt"></i></button>
@@ -73,6 +75,7 @@ const RegisterGeneral = (props) => {
                             <thead className='header'>
                                 <th>Descrição</th>
                                 <th>Linha de Produção</th>
+                                
                                 <th>Ação</th>
                             </thead>
                             <tbody>
@@ -82,6 +85,7 @@ const RegisterGeneral = (props) => {
                                             <tr key={i}>
                                                 <td>{activity.description}</td>
                                                 <td>{activity.product}</td>
+                                                
                                                 <td>
                                                     <div>
                                                         <button className='btn p-1'><i className="far fa-trash-alt"></i></button>
@@ -103,25 +107,28 @@ const RegisterGeneral = (props) => {
                 <Modal  type={modalType} machine={machine}>
                 </Modal>
                 
-                <ActivityModal>
+                <ActivityModal machines={machines}>
                 </ActivityModal>
         </div>
     );
 }
 
 function Modal(props) {
-    const [desc, setDesc] = useState(props.machine ? props.machine.description: '1');
+    const [desc, setDesc] = useState('');
     const [product, setProduct] = useState('');
     const [nSerie, setNSerie] = useState('');
+    const [sector, setSector]= useState('');
+    const [editing, setEditing] = useState(false);
+    // const nSerie = useRef()
 
-    // setDesc(props.machine ? props.machine.description: '1')
+
 
     const editMachine = async () => {
-        await db.collection('machines').doc(props.machine.id).update({"description":desc, "product": product, 'n_serie': nSerie});
+        await db.collection('machines').doc(props.machine.id).update({"description":desc, "product": product, 'n_serie': nSerie, 'sector': sector});
     }
 
     const addMachine = async () => {
-        await db.collection('machines').doc().set({"description": desc, "product": product, 'n_serie': nSerie})
+        await db.collection('machines').doc().set({"description": desc, "product": product, 'n_serie': nSerie, 'sector': sector})
 
     }
    
@@ -136,21 +143,29 @@ function Modal(props) {
                     </div>
                     <div className="modal-body">
                     <div className="d-flex my-2 justify-content-between ">
-                            <div className=''>
-                                <label htmlFor="" className="form-label">Produto</label>
-                                <input type="text"  className="form-control"  value={product} onChange={(e) => setProduct(e.target.value)} required/>
+                            <div className='col-5'>
+                                <label htmlFor="" className="form-label">Linha de Produção</label>
+                                <input type="text"  className="form-control"  value={props.machine && !editing ? props.machine.product : product} onChange={(e) => {setProduct(e.target.value); setEditing(true)}} required/>
                             </div>
                             
-                            <div >
-                                <label htmlFor="" className="form-label " >N° Série</label>
-                                <input type="text"  className="form-control" value={nSerie} onChange={(e) => setNSerie(e.target.value)} required/>
+                            <div className=" mx-1 col-3" >
+                                <label htmlFor="" className="form-label " >Setor</label>
+                                <input type="text"  className="form-control" value={props.machine && !editing ? props.machine.sector : sector} onChange={(e) => {setSector(e.target.value); setEditing(true)}} required/>
                             </div>                          
 
-                    </div>
+                            <div >
+                                <label htmlFor="" className="form-label " >N° Série</label>
+                                <input type="text"  className="form-control" value={ props.machine && !editing ? props.machine.n_serie : nSerie} onChange={(e) => {setNSerie(e.target.value); setEditing(true)}} required/>
+                            </div> 
+
+                    </div >
+                    
+                    
                         <div class="form-floating">
-                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style={{height: '100px'}} value={desc} onChange={(e) => setDesc(e.target.value)}></textarea>
+                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style={{height: '100px'}} value={props.machine && !editing ? props.machine.description:desc} onChange={(e) => {setDesc(e.target.value); setEditing(true)}}></textarea>
                             <label for="floatingTextarea2">Descrição</label>
                         </div>
+                       
 
                     </div>
                     <div className="modal-footer">
@@ -190,6 +205,8 @@ function Modal(props) {
         setDesc('');
         setProduct('');
         setNSerie('');
+        setSector('');
+        setEditing(false);
      
         
         // modal.hidden = true
@@ -247,12 +264,23 @@ function ActivityModal(props) {
                             <label htmlFor="" className="form-label">Atividade</label>
                             <input type="text"  className="form-control" ref={activityNameRef} required/>
                         </div>
-                        <div className="d-flex  ">
+                        <div >
                             <div className='m-2 '>
-                                <label htmlFor="" className="form-label">Produto</label>
-                                <input type="text"  className="form-control" ref={productRef} required/>
+                                <label htmlFor="" className="form-label">Máquina - Linha - Setor</label>
+                                <select class="form-select" aria-label="Default select example">
+                                    <option selected>Selecione uma máquina</option>
+                                    {props.machines.map((machine, i) => {
+                                        return (
+                                            <option value={i}>{machine.description+' - '+ machine.product +' - '+ machine.sector}</option>
+                                        )
+                                        
+                                    })}
+                                  
+                                </select>
+                               
                             </div>
-                            <div className='m-2 d-flex col-6'>
+                          
+                            {/* <div className='m-2 d-flex col-6'>
                                 <div className='mx-1'>
                                     <label htmlFor="" className="form-label col-4">Frequência</label>
                                     <input type="number"  className="form-control" ref={freqRef} required/>
@@ -261,11 +289,20 @@ function ActivityModal(props) {
                                     <label htmlFor="" className="form-label">Paradas</label>
                                     <input type="number"  className="form-control" ref={stopsRef} required/>
                                 </div>
-                            </div>
+                            </div> */}
 
                         </div>
-                        <div className="d-flex">
-                            <div className='m-2'>
+                        <div className="d-flex m-2 justify-content-between">
+                            <div className="col-6 mx-1">
+                                <label htmlFor="" className="form-label">Tipo de Manutenção</label>
+                                <select class="form-select" aria-label="Default select example">
+                                    <option selected>Selecione o tipo</option>
+                                    <option value="1">MECÂNICA</option>
+                                    <option value="2">LUBRIFICAÇÃO</option>
+                                    <option value="3">ElÉTRICA</option>
+                                </select>
+                            </div>
+                            <div className="col-6" >
                                 <label htmlFor="" className="form-label">Técnico</label>
                                 <input type="text"  className="form-control" ref={techRef} required/>
                             </div>
