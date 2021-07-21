@@ -3,9 +3,11 @@ import {db} from '../../firebase'
 
 const RegisterGeneral = (props) => {
     const [modalType, setType] = useState();
+    const [modalActivityType, setModalActivityType] = useState(0);
     const [machines, setMachines] = useState([]);
     const [activities, setActivities] = useState([])
     const [machine, setMachine] = useState();
+    const [activity, setActivity] = useState();
     
 
   
@@ -68,13 +70,15 @@ const RegisterGeneral = (props) => {
                                 }
                             </tbody>
                         </table>
-                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => {setType(0); setMachine(undefined);}}><i class="fas fa-plus-circle"></i> Nova Máquina</button>
+                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => {setType(0); setMachine(null);}}><i class="fas fa-plus-circle"></i> Nova Máquina</button>
                     </div>
                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <table className='table table-primary'>
                             <thead className='header'>
                                 <th>Descrição</th>
-                                <th>Linha de Produção</th>
+                                <th>Máquina</th>
+
+                                {/* <th>Linha de Produção</th> */}
                                 
                                 <th>Ação</th>
                             </thead>
@@ -84,12 +88,13 @@ const RegisterGeneral = (props) => {
                                         return(
                                             <tr key={i}>
                                                 <td>{activity.description}</td>
-                                                <td>{activity.product}</td>
+                                                <td>{activity.description}</td>
+                                                {/* <td>{machines.find( machine => machine.id === activity.machine ).description}</td> */}
                                                 
                                                 <td>
                                                     <div>
                                                         <button className='btn p-1'><i className="far fa-trash-alt"></i></button>
-                                                        <button className='btn p-1'><i className="far fa-edit"></i></button>
+                                                        <button className='btn p-1'  data-bs-toggle="modal" data-bs-target="#addActivity" onClick={ () => {setActivity(activity); setModalActivityType(1)}}><i className="far fa-edit"></i></button>
                                                     </div>
                                                 </td>
                                                 
@@ -99,7 +104,7 @@ const RegisterGeneral = (props) => {
                                 }
                             </tbody>
                         </table>
-                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addActivity"><i class="fas fa-plus-circle"></i> Nova Atividade</button>
+                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addActivity"><i class="fas fa-plus-circle" onClick={ () => {setActivity(null); setModalActivityType(0)}}></i> Nova Atividade</button>
                     </div>
                    
                 </div>
@@ -107,7 +112,7 @@ const RegisterGeneral = (props) => {
                 <Modal  type={modalType} machine={machine}>
                 </Modal>
                 
-                <ActivityModal machines={machines}>
+                <ActivityModal machines={machines} activity={activity} type={modalActivityType}>
                 </ActivityModal>
         </div>
     );
@@ -218,18 +223,31 @@ function Modal(props) {
 }
 
 function ActivityModal(props) {
-    // console.log('modal')
-    let activityNameRef = useRef();
-    let machineRef = useRef();
-    let freqRef = useRef();
-    let techRef = useRef();
-    let stopsRef = useRef();
-    let lubricant = useRef();
+    const [activityName, setActivityName] = useState('');
+    const [machine, setMachine] = useState('');
+    const [freq, setFreq] = useState('');
+    const [tech, setTech] = useState('');
+    const [lubricant, setLubricant] = useState('');
+    const [editing, setEditing] = useState(false);
+    
+    // let activityNameRef = useRef('teste');
+    // let machineRef = useRef();
+    // let freqRef = useRef();
+    // let techRef = useRef();
+    // let lubricant = useRef();
     const [value, setValue] = useState();
 
     function clearModal(){
-        activityNameRef.current.value = ''
-        
+        setActivityName('')
+        setMachine('')
+        setFreq('')
+        setTech('')
+        setValue('')
+        setEditing(false)
+
+        // if(lubricant.current){
+        //     lubricant.current.value = ''
+        // }
         // var bottonSave = document.getElementById('saveButton2');
                                         
         // bottonSave.setAttribute('data-bs-dismiss', 'modal')
@@ -242,10 +260,10 @@ function ActivityModal(props) {
         const activityRef = db.collection('activities');
         
         
-        console.log( machineRef.current.value)
-        if( activityNameRef.current.value !== "" &&  machineRef.current.value !== "" && freqRef.current.value !== "" &&  stopsRef.current.value ){
+        // console.log( machineRef.current.value)
+        if( activityName !== "" &&  machine !== "" && freq !== "" ){
 
-            let activity= {description: activityNameRef.current.value, machine: machineRef.current.value, frequency: freqRef.current.value, tech: techRef.current.value, createdAt: Date.now(), type: value, lubricant: lubricant.current.value}
+            let activity= {description: activityName, machine: machine, frequency: freq, tech: tech, createdAt: Date.now(), type: value, lubricant: lubricant}
     
             await activityRef.doc().set(activity);
         }else{
@@ -265,12 +283,12 @@ function ActivityModal(props) {
                     <div className="modal-body">
                         <div className='m-2'>
                             <label htmlFor="" className="form-label">Atividade</label>
-                            <input type="text"  className="form-control" ref={activityNameRef} required/>
+                            <input type="text"  className="form-control" required value ={props.activity && !editing ? props.activity.description: activityName} onChange={ (e) => {setActivityName(e.target.value); setEditing(true)} }/>
                         </div>
                         <div >
                             <div className='m-2 '>
                                 <label htmlFor="" className="form-label">Máquina - Linha - Setor</label>
-                                <select class="form-select" aria-label="Default select example" ref={machineRef} >
+                                <select className="form-select" aria-label="Default select example"  value={props.type === 1? props.activity.machine : machine} onChange={ (e) => {setMachine(e.target.value)}} >
                                     <option selected value="">Selecione uma máquina</option>
                                     {props.machines.map((machine, i) => {
                                         return (
@@ -300,7 +318,7 @@ function ActivityModal(props) {
                             <div className="col-6">
                                 <label htmlFor="" className="form-label">Tipo de Manutenção</label>
                                 <select className="form-select" aria-label="Default select example" onChange={(e) => setValue(e.target.value)}>
-                                    <option selected>Selecione o tipo</option>
+                                    <option selected value="">Selecione o tipo</option>
                                     <option value="MECÂNICA">MECÂNICA</option>
                                     <option value="LUBRIFICAÇÃO">LUBRIFICAÇÃO</option>
                                     <option value="ElÉTRICA">ElÉTRICA</option>
@@ -308,7 +326,7 @@ function ActivityModal(props) {
                             </div>
                             <div className="mx-1" >
                                 <label htmlFor="" className="form-label">Técnico</label>
-                                <input type="text"  className="form-control" ref={techRef} required/>
+                                <input type="text"  className="form-control"  required value={props.type === 1 ? props.activity.tech : tech} onChange={(e) => {setTech(e.target.value)}}/>
                             </div>
 
                             
@@ -317,14 +335,14 @@ function ActivityModal(props) {
                             <div className='col-6'>
                                 <div className=''>
                                     <label htmlFor="" className="form-label col-4">Frequência</label>
-                                    <input type="number"  className="form-control" ref={freqRef} required/>
+                                    <input type="number"  className="form-control" value={props.type === 1 ?  props.activity.freq : freq} onChange={(e) => {setFreq(e.targe.value)}} required/>
                                 </div>
                                 
                             </div>
                             {
                                 value === 'LUBRIFICAÇÃO' ?  <div className="mx-1 " >
                                 <label htmlFor="" className="form-label">Lubrificante</label>
-                                <input type="text"  className="form-control" ref={lubricant} required/>
+                                <input type="text"  className="form-control" value={props.type === 1 ? props.activity.lubricant : lubricant} onChange={(e) => {setLubricant(e.target.value)}} required/>
                             </div>: <div></div>
                             }
                         </div>
