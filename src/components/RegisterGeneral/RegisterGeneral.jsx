@@ -3,9 +3,11 @@ import {db} from '../../firebase'
 
 const RegisterGeneral = (props) => {
     const [modalType, setType] = useState();
+    const [modalActivityType, setModalActivityType] = useState();
     const [machines, setMachines] = useState([]);
     const [activities, setActivities] = useState([])
     const [machine, setMachine] = useState();
+    const [activity, setActivity] = useState();
     
 
   
@@ -14,6 +16,9 @@ const RegisterGeneral = (props) => {
         await db.collection('machines').doc(idMachine).delete()
     }
 
+    const removeActivity = async(idActivity) => {
+        await db.collection('activities').doc(idActivity).delete()
+    }
        
 
     useEffect( () => {
@@ -68,7 +73,7 @@ const RegisterGeneral = (props) => {
                                 }
                             </tbody>
                         </table>
-                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => {setType(0); setMachine(undefined);}}><i class="fas fa-plus-circle"></i> Nova Máquina</button>
+                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => { setMachine(undefined); setType(0); }}><i class="fas fa-plus-circle"></i> Nova Máquina</button>
                     </div>
                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <table className='table table-primary'>
@@ -88,8 +93,8 @@ const RegisterGeneral = (props) => {
                                                 
                                                 <td>
                                                     <div>
-                                                        <button className='btn p-1'><i className="far fa-trash-alt"></i></button>
-                                                        <button className='btn p-1'><i className="far fa-edit"></i></button>
+                                                        <button className='btn p-1'  onClick={() => removeActivity(activity.id)}><i className="far fa-trash-alt"></i></button>
+                                                        <button className='btn p-1' data-bs-toggle="modal" data-bs-target="#addActivity" onClick={() => {setActivity(activity); setModalActivityType(1)}}><i className="far fa-edit"></i></button>
                                                     </div>
                                                 </td>
                                                 
@@ -99,7 +104,7 @@ const RegisterGeneral = (props) => {
                                 }
                             </tbody>
                         </table>
-                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addActivity"><i class="fas fa-plus-circle"></i> Nova Atividade</button>
+                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addActivity" onClick={() => {setActivity(undefined); setModalActivityType(0)}}><i class="fas fa-plus-circle"></i> Nova Atividade</button>
                     </div>
                    
                 </div>
@@ -107,7 +112,7 @@ const RegisterGeneral = (props) => {
                 <Modal  type={modalType} machine={machine}>
                 </Modal>
                 
-                <ActivityModal machines={machines}>
+                <ActivityModal machines={machines} activity={activity} type={modalActivityType}>
                 </ActivityModal>
         </div>
     );
@@ -115,11 +120,24 @@ const RegisterGeneral = (props) => {
 
 function Modal(props) {
     const [desc, setDesc] = useState('');
-    const [product, setProduct] = useState('');
+    const [product, setProduct] = useState('Product');
     const [nSerie, setNSerie] = useState('');
     const [sector, setSector]= useState('');
-    const [editing, setEditing] = useState(false);
-    // const nSerie = useRef()
+ 
+
+    useEffect(() =>{
+        if(props.machine){
+            setDesc(props.machine.description);
+            setProduct(props.machine.product);
+            setNSerie(props.machine.n_serie);
+            setSector(props.machine.sector);
+        }else{
+            setDesc('');
+            setProduct('');
+            setNSerie('');
+            setSector('');
+        }
+    }, [props.machine])
 
 
 
@@ -135,34 +153,34 @@ function Modal(props) {
     return (
         
         <div className="modal fade" id="addAnomally" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog">
-                <div className="modal-content">
+            <form className="modal-dialog" key={props.machine}>
+                <div className="modal-content" >
                     <div className="modal-header">
                         <h5 className="modal-title" id="exampleModalLabel">{props.type === 0 ? 'Nova Máquina': 'Edição de Máquina'}</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
                     <div className="d-flex my-2 justify-content-between ">
-                            <div className='col-5'>
+                            <div className='col-5' >
                                 <label htmlFor="" className="form-label">Linha de Produção</label>
-                                <input type="text"  className="form-control"  value={props.machine && !editing ? props.machine.product : product} onChange={(e) => {setProduct(e.target.value); setEditing(true)}} required/>
+                                <input type="text"  className="form-control" value={product} onChange={(e) => {setProduct(e.target.value); }} required />
                             </div>
                             
                             <div className=" mx-1 col-3" >
                                 <label htmlFor="" className="form-label " >Setor</label>
-                                <input type="text"  className="form-control" value={props.machine && !editing ? props.machine.sector : sector} onChange={(e) => {setSector(e.target.value); setEditing(true)}} required/>
+                                <input type="text"  className="form-control" value={sector} onChange={(e) => {setSector(e.target.value)}} required/>
                             </div>                          
 
                             <div >
                                 <label htmlFor="" className="form-label " >N° Série</label>
-                                <input type="text"  className="form-control" value={ props.machine && !editing ? props.machine.n_serie : nSerie} onChange={(e) => {setNSerie(e.target.value); setEditing(true)}} required/>
+                                <input type="text"  className="form-control" value={  nSerie} onChange={(e) => {setNSerie(e.target.value); }} required/>
                             </div> 
 
                     </div >
                     
                     
                         <div class="form-floating">
-                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style={{height: '100px'}} value={props.machine && !editing ? props.machine.description:desc} onChange={(e) => {setDesc(e.target.value); setEditing(true)}}></textarea>
+                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style={{height: '100px'}} value={desc} onChange={(e) => {setDesc(e.target.value); }}></textarea>
                             <label for="floatingTextarea2">Descrição</label>
                         </div>
                        
@@ -197,7 +215,7 @@ function Modal(props) {
                              }}>Salvar</button>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     )
 
@@ -206,43 +224,50 @@ function Modal(props) {
         setProduct('');
         setNSerie('');
         setSector('');
-        setEditing(false);
-     
-        
-        // modal.hidden = true
-                                        
-        // bottonSave.setAttribute('data-bs-dismiss', 'modal')
-        // bottonSave.click()
-        // bottonSave.removeAttribute('data-bs-dismiss')
+       
     }
 }
 
 function ActivityModal(props) {
-    // console.log('modal')
-    let activityNameRef = useRef();
-    let productRef = useRef();
-    let freqRef = useRef();
-    let techRef = useRef();
-    let stopsRef = useRef();
+    const [activityName, setActivityName] = useState('');
+    const [machine, setMachine] = useState('');
+    const [freq, setFreq] = useState('');
+    const [tech, setTech] = useState('');
+    const [lubricant, setLubricant] = useState('');
+  
+    const [value, setValue] = useState();
 
     function clearModal(){
-        activityNameRef.current.value = ''
+        setActivityName('')
+        setMachine('')
+        setFreq('')
+        setTech('')
+        setValue('')
         
-        // var bottonSave = document.getElementById('saveButton2');
-                                        
-        // bottonSave.setAttribute('data-bs-dismiss', 'modal')
-        // bottonSave.click()
-        // bottonSave.removeAttribute('data-bs-dismiss')
     }
+
+
+    useEffect(() => {
+        if(props.activity){
+            setActivityName(props.activity.description)
+        setMachine(props.activity.machine)
+        setFreq(parseInt(props.activity.frequency))
+        setTech(props.activity.tech)
+        setValue(props.activity.type)
+        }else{
+            clearModal();
+        }
+
+    }, [props.activity])
 
 
     async function handleSave(){
         const activityRef = db.collection('activities');
         
+        
+        if( activityName !== "" &&  machine !== "" && freq !== "" ){
 
-        if( activityNameRef.current.value !== "" &&  productRef.current.value !== "" && freqRef.current.value !== "" &&  stopsRef.current.value ){
-
-            let activity= {description: activityNameRef.current.value, product: productRef.current.value, frequency: freqRef.current.value, tech: techRef.current.value, stops: stopsRef.current.value, createdAt: Date.now()}
+            let activity= {description: activityName, machine: machine, frequency: freq, tech: tech, createdAt: Date.now(), type: value, lubricant: lubricant}
     
             await activityRef.doc().set(activity);
         }else{
@@ -262,16 +287,16 @@ function ActivityModal(props) {
                     <div className="modal-body">
                         <div className='m-2'>
                             <label htmlFor="" className="form-label">Atividade</label>
-                            <input type="text"  className="form-control" ref={activityNameRef} required/>
+                            <input type="text"  className="form-control" required value ={activityName} onChange={ (e) => {setActivityName(e.target.value); } }/>
                         </div>
                         <div >
                             <div className='m-2 '>
                                 <label htmlFor="" className="form-label">Máquina - Linha - Setor</label>
-                                <select class="form-select" aria-label="Default select example">
-                                    <option selected>Selecione uma máquina</option>
+                                <select className="form-select" aria-label="Default select example"  value={machine} onChange={ (e) => {setMachine(e.target.value)}} >
+                                    <option selected value="">Selecione uma máquina</option>
                                     {props.machines.map((machine, i) => {
                                         return (
-                                            <option value={i}>{machine.description+' - '+ machine.product +' - '+ machine.sector}</option>
+                                            <option value={machine.id}>{machine.description+' - '+ machine.product +' - '+ machine.sector}</option>
                                         )
                                         
                                     })}
@@ -279,6 +304,7 @@ function ActivityModal(props) {
                                 </select>
                                
                             </div>
+                           
                           
                             {/* <div className='m-2 d-flex col-6'>
                                 <div className='mx-1'>
@@ -292,22 +318,37 @@ function ActivityModal(props) {
                             </div> */}
 
                         </div>
-                        <div className="d-flex m-2 justify-content-between">
-                            <div className="col-6 mx-1">
+                        <div className="d-flex m-2 ">
+                            <div className="col-6">
                                 <label htmlFor="" className="form-label">Tipo de Manutenção</label>
-                                <select class="form-select" aria-label="Default select example">
-                                    <option selected>Selecione o tipo</option>
-                                    <option value="1">MECÂNICA</option>
-                                    <option value="2">LUBRIFICAÇÃO</option>
-                                    <option value="3">ElÉTRICA</option>
+                                <select className="form-select" aria-label="Default select example" value={value} onChange={(e) => setValue(e.target.value)}>
+                                    <option selected value="">Selecione o tipo</option>
+                                    <option value="MECÂNICA">MECÂNICA</option>
+                                    <option value="LUBRIFICAÇÃO">LUBRIFICAÇÃO</option>
+                                    <option value="ElÉTRICA">ElÉTRICA</option>
                                 </select>
                             </div>
-                            <div className="col-6" >
+                            <div className="mx-1" >
                                 <label htmlFor="" className="form-label">Técnico</label>
-                                <input type="text"  className="form-control" ref={techRef} required/>
+                                <input type="text"  className="form-control"  required value={tech} onChange={(e) => {setTech(e.target.value)}}/>
                             </div>
 
                             
+                        </div>
+                        <div className="d-flex m-2">
+                            <div className='col-6'>
+                                <div className=''>
+                                    <label htmlFor="" className="form-label col-4">Frequência</label>
+                                    <input type="number"  className="form-control" value={parseInt(freq)} onChange={(e) => {setFreq(e.target.value)}} required/>
+                                </div>
+                                
+                            </div>
+                            {
+                                value === 'LUBRIFICAÇÃO' ?  <div className="mx-1 " >
+                                <label htmlFor="" className="form-label">Lubrificante</label>
+                                <input type="text"  className="form-control" value={lubricant} onChange={(e) => {setLubricant(e.target.value)}} required/>
+                            </div>: <div></div>
+                            }
                         </div>
 
                         {/* <div className="m-2">
@@ -336,5 +377,6 @@ function ActivityModal(props) {
         </div>
     )
 }
+
 
 export default RegisterGeneral
