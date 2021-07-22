@@ -3,7 +3,11 @@ import {db} from '../../firebase'
 
 const RegisterGeneral = (props) => {
     const [modalType, setType] = useState();
+<<<<<<< HEAD
     const [modalActivityType, setModalActivityType] = useState();
+=======
+    const [modalActivityType, setModalActivityType] = useState(0);
+>>>>>>> 5029f36d5ffed87ef4d9654bb85afabdc6d55c49
     const [machines, setMachines] = useState([]);
     const [activities, setActivities] = useState([])
     const [machine, setMachine] = useState();
@@ -73,13 +77,19 @@ const RegisterGeneral = (props) => {
                                 }
                             </tbody>
                         </table>
+<<<<<<< HEAD
                         <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => { setMachine(undefined); setType(0); }}><i class="fas fa-plus-circle"></i> Nova Máquina</button>
+=======
+                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => {setType(0); setMachine(null);}}><i class="fas fa-plus-circle"></i> Nova Máquina</button>
+>>>>>>> 5029f36d5ffed87ef4d9654bb85afabdc6d55c49
                     </div>
                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <table className='table table-primary'>
                             <thead className='header'>
                                 <th>Descrição</th>
-                                <th>Linha de Produção</th>
+                                <th>Máquina</th>
+
+                                {/* <th>Linha de Produção</th> */}
                                 
                                 <th>Ação</th>
                             </thead>
@@ -89,12 +99,18 @@ const RegisterGeneral = (props) => {
                                         return(
                                             <tr key={i}>
                                                 <td>{activity.description}</td>
-                                                <td>{activity.product}</td>
+                                                <td>{activity.description}</td>
+                                                {/* <td>{machines.find( machine => machine.id === activity.machine ).description}</td> */}
                                                 
                                                 <td>
                                                     <div>
+<<<<<<< HEAD
                                                         <button className='btn p-1'  onClick={() => removeActivity(activity.id)}><i className="far fa-trash-alt"></i></button>
                                                         <button className='btn p-1' data-bs-toggle="modal" data-bs-target="#addActivity" onClick={() => {setActivity(activity); setModalActivityType(1)}}><i className="far fa-edit"></i></button>
+=======
+                                                        <button className='btn p-1'><i className="far fa-trash-alt"></i></button>
+                                                        <button className='btn p-1'  data-bs-toggle="modal" data-bs-target="#addActivity" onClick={ () => {setActivity(activity); setModalActivityType(1)}}><i className="far fa-edit"></i></button>
+>>>>>>> 5029f36d5ffed87ef4d9654bb85afabdc6d55c49
                                                     </div>
                                                 </td>
                                                 
@@ -104,7 +120,11 @@ const RegisterGeneral = (props) => {
                                 }
                             </tbody>
                         </table>
+<<<<<<< HEAD
                         <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addActivity" onClick={() => {setActivity(undefined); setModalActivityType(0)}}><i class="fas fa-plus-circle"></i> Nova Atividade</button>
+=======
+                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addActivity"><i class="fas fa-plus-circle" onClick={ () => {setActivity(null); setModalActivityType(0)}}></i> Nova Atividade</button>
+>>>>>>> 5029f36d5ffed87ef4d9654bb85afabdc6d55c49
                     </div>
                    
                 </div>
@@ -234,7 +254,17 @@ function ActivityModal(props) {
     const [freq, setFreq] = useState('');
     const [tech, setTech] = useState('');
     const [lubricant, setLubricant] = useState('');
+<<<<<<< HEAD
   
+=======
+    const [editing, setEditing] = useState(false);
+    
+    // let activityNameRef = useRef('teste');
+    // let machineRef = useRef();
+    // let freqRef = useRef();
+    // let techRef = useRef();
+    // let lubricant = useRef();
+>>>>>>> 5029f36d5ffed87ef4d9654bb85afabdc6d55c49
     const [value, setValue] = useState();
 
     function clearModal(){
@@ -243,7 +273,20 @@ function ActivityModal(props) {
         setFreq('')
         setTech('')
         setValue('')
+<<<<<<< HEAD
         
+=======
+        setEditing(false)
+
+        // if(lubricant.current){
+        //     lubricant.current.value = ''
+        // }
+        // var bottonSave = document.getElementById('saveButton2');
+                                        
+        // bottonSave.setAttribute('data-bs-dismiss', 'modal')
+        // bottonSave.click()
+        // bottonSave.removeAttribute('data-bs-dismiss')
+>>>>>>> 5029f36d5ffed87ef4d9654bb85afabdc6d55c49
     }
 
 
@@ -265,6 +308,10 @@ function ActivityModal(props) {
         const activityRef = db.collection('activities');
         
         
+<<<<<<< HEAD
+=======
+        // console.log( machineRef.current.value)
+>>>>>>> 5029f36d5ffed87ef4d9654bb85afabdc6d55c49
         if( activityName !== "" &&  machine !== "" && freq !== "" ){
 
             let activity= {description: activityName, machine: machine, frequency: freq, tech: tech, createdAt: Date.now(), type: value, lubricant: lubricant}
@@ -287,12 +334,20 @@ function ActivityModal(props) {
                     <div className="modal-body">
                         <div className='m-2'>
                             <label htmlFor="" className="form-label">Atividade</label>
+<<<<<<< HEAD
                             <input type="text"  className="form-control" required value ={activityName} onChange={ (e) => {setActivityName(e.target.value); } }/>
+=======
+                            <input type="text"  className="form-control" required value ={props.activity && !editing ? props.activity.description: activityName} onChange={ (e) => {setActivityName(e.target.value); setEditing(true)} }/>
+>>>>>>> 5029f36d5ffed87ef4d9654bb85afabdc6d55c49
                         </div>
                         <div >
                             <div className='m-2 '>
                                 <label htmlFor="" className="form-label">Máquina - Linha - Setor</label>
+<<<<<<< HEAD
                                 <select className="form-select" aria-label="Default select example"  value={machine} onChange={ (e) => {setMachine(e.target.value)}} >
+=======
+                                <select className="form-select" aria-label="Default select example"  value={props.type === 1? props.activity.machine : machine} onChange={ (e) => {setMachine(e.target.value)}} >
+>>>>>>> 5029f36d5ffed87ef4d9654bb85afabdc6d55c49
                                     <option selected value="">Selecione uma máquina</option>
                                     {props.machines.map((machine, i) => {
                                         return (
@@ -321,7 +376,11 @@ function ActivityModal(props) {
                         <div className="d-flex m-2 ">
                             <div className="col-6">
                                 <label htmlFor="" className="form-label">Tipo de Manutenção</label>
+<<<<<<< HEAD
                                 <select className="form-select" aria-label="Default select example" value={value} onChange={(e) => setValue(e.target.value)}>
+=======
+                                <select className="form-select" aria-label="Default select example" onChange={(e) => setValue(e.target.value)}>
+>>>>>>> 5029f36d5ffed87ef4d9654bb85afabdc6d55c49
                                     <option selected value="">Selecione o tipo</option>
                                     <option value="MECÂNICA">MECÂNICA</option>
                                     <option value="LUBRIFICAÇÃO">LUBRIFICAÇÃO</option>
@@ -330,7 +389,11 @@ function ActivityModal(props) {
                             </div>
                             <div className="mx-1" >
                                 <label htmlFor="" className="form-label">Técnico</label>
+<<<<<<< HEAD
                                 <input type="text"  className="form-control"  required value={tech} onChange={(e) => {setTech(e.target.value)}}/>
+=======
+                                <input type="text"  className="form-control"  required value={props.type === 1 ? props.activity.tech : tech} onChange={(e) => {setTech(e.target.value)}}/>
+>>>>>>> 5029f36d5ffed87ef4d9654bb85afabdc6d55c49
                             </div>
 
                             
@@ -339,14 +402,22 @@ function ActivityModal(props) {
                             <div className='col-6'>
                                 <div className=''>
                                     <label htmlFor="" className="form-label col-4">Frequência</label>
+<<<<<<< HEAD
                                     <input type="number"  className="form-control" value={parseInt(freq)} onChange={(e) => {setFreq(e.target.value)}} required/>
+=======
+                                    <input type="number"  className="form-control" value={props.type === 1 ?  props.activity.freq : freq} onChange={(e) => {setFreq(e.targe.value)}} required/>
+>>>>>>> 5029f36d5ffed87ef4d9654bb85afabdc6d55c49
                                 </div>
                                 
                             </div>
                             {
                                 value === 'LUBRIFICAÇÃO' ?  <div className="mx-1 " >
                                 <label htmlFor="" className="form-label">Lubrificante</label>
+<<<<<<< HEAD
                                 <input type="text"  className="form-control" value={lubricant} onChange={(e) => {setLubricant(e.target.value)}} required/>
+=======
+                                <input type="text"  className="form-control" value={props.type === 1 ? props.activity.lubricant : lubricant} onChange={(e) => {setLubricant(e.target.value)}} required/>
+>>>>>>> 5029f36d5ffed87ef4d9654bb85afabdc6d55c49
                             </div>: <div></div>
                             }
                         </div>
