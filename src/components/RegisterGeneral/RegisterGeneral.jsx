@@ -246,6 +246,7 @@ function ActivityModal(props) {
         setFreq('')
         setTech('')
         setValue('')
+        setLubricant('')
         
     }
 
