@@ -1,165 +1,227 @@
-import React, { useState } from 'react';
+import { parse } from 'date-fns';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'
+import { db } from '../../firebase';
 import './ActivitiesList.css'
 
 
 const ActivitiesList = (props) => {
     const { date } = useParams()
 
-    const activities = [
-        {
-            id: 0,
-            activity: 'INSPECIONAR CORRENTE INFERIOR',
-            freq: 15,
-            machine: 'SOPRADORA',
-            tec: "Fulano ",
-            product: "Desinfetante",
-        },
-        {
-            id: 1,
-            activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-            freq: 7,
-            machine: 'Chiler',
-            tec: "Beltrano",
-            product: "Á. Sanitária",
-        },
-        {
-            id: 2,
-            activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-            freq: 7,
-            machine: 'CHILER',
-            tec: "Beltrano",
-            product: "Desinfetante",
-        },
-        {
-            id: 3,
-            activity: 'INSPECIONAR CORRENTE INFERIOR',
-            freq: 15,
-            machine: 'SOPRADORA',
-            tec: "Fulano ",
-            product: "S. Glicerinado",
-        },
-        {
-            id: 4,
-            activity: 'INSPECIONAR ROSCA SEM FIM',
-            freq: 15,
-            machine: 'ROTULADORA',
-            tec: "CICLANO ",
-            product: "S. Rajado",
-        },
-        {
-            id: 5,
-            activity: 'INSPECIONAR AJUSTE DAS ESTRELAS',
-            freq: 14,
-            machine: 'ENVASADORA',
-            tec: "Fulano ",
-            product: "Á. Sanitária",
-        },
-        {
-            id: 6,
-            activity: 'INSPECIONAR CORRENTE INFERIOR',
-            freq: 15,
-            machine: 'SOPRADORA',
-            tec: "Fulano ",
-            product: "Multiuso",
-        },
-        {
-            id: 7,
-            activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-            freq: 7,
-            machine: 'Chiler',
-            tec: "Beltrano",
-            product: "Detergente",
-        },
-        {
-            id: 8,
-            activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-            freq: 7,
-            machine: 'CHILER',
-            tec: "Beltrano",
-            product: "Á. Sanitária",
-        },
-        {
-            id: 0,
-            activity: 'INSPECIONAR CORRENTE INFERIOR',
-            freq: 15,
-            machine: 'SOPRADORA',
-            tec: "Fulano ",
-            product: "S. Glicerinado",
-        },
-        {
-            id: 1,
-            activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-            freq: 7,
-            machine: 'Chiler',
-            tec: "Beltrano",
-            product: "Detergente",
-        },
-        {
-            id: 2,
-            activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-            freq: 7,
-            machine: 'CHILER',
-            tec: "Beltrano",
-            product: "Multiuso",
-        },
-        {
-            id: 3,
-            activity: 'INSPECIONAR CORRENTE INFERIOR',
-            freq: 15,
-            machine: 'SOPRADORA',
-            tec: "Fulano ",
-            product: "S. Rajado",
-        },
-        {
-            id: 4,
-            activity: 'INSPECIONAR ROSCA SEM FIM',
-            product: "Á. Sanitária",
-            freq: 15,
-            machine: 'ROTULADORA',
-            tec: "CICLANO "
-        },
-        {
-            id: 5,
-            activity: 'INSPECIONAR AJUSTE DAS ESTRELAS',
-            freq: 14,
-            machine: 'ENVASADORA',
-            tec: "Fulano ",
-            product: "Desinfetante",
-        },
-        {
-            id: 6,
-            activity: 'INSPECIONAR CORRENTE INFERIOR',
-            freq: 15,
-            machine: 'SOPRADORA',
-            tec: "Fulano ",
-            product: "S.Glicerinado",
-        },
-        {
-            id: 7,
-            activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-            freq: 7,
-            machine: 'Chiler',
-            tec: "Beltrano",
-            product: "Detergente",
-        },
-        {
-            id: 8,
-            activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-            freq: 7,
-            machine: 'CHILER',
-            tec: "Beltrano",
-            product: "Desinfetante",
-        },
-
-
-    ]
-
+    
     const [infoActivity, setActivity] = useState({})
     const [filterValue, setFilterValue] = useState('0')
     const [subFilter, setSubFilter] = useState('')
     const [filterValues, setFilterValues] = useState([])
+    const [activities, setActivities] = useState([])
+    const [listIds, setListsIds] = useState([]);
     const [auxActivities, setAuxActivities] = useState(activities)
+
+    // const activities = [
+        // {
+        //     id: 0,
+        //     activity: 'INSPECIONAR CORRENTE INFERIOR',
+        //     freq: 15,
+        //     machine: 'SOPRADORA',
+        //     tec: "Fulano ",
+        //     product: "Desinfetante",
+        // },
+        // {
+        //     id: 1,
+        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
+        //     freq: 7,
+        //     machine: 'Chiler',
+        //     tec: "Beltrano",
+        //     product: "Á. Sanitária",
+        // },
+        // {
+        //     id: 2,
+        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
+        //     freq: 7,
+        //     machine: 'CHILER',
+        //     tec: "Beltrano",
+        //     product: "Desinfetante",
+        // },
+        // {
+        //     id: 3,
+        //     activity: 'INSPECIONAR CORRENTE INFERIOR',
+        //     freq: 15,
+        //     machine: 'SOPRADORA',
+        //     tec: "Fulano ",
+        //     product: "S. Glicerinado",
+        // },
+        // {
+        //     id: 4,
+        //     activity: 'INSPECIONAR ROSCA SEM FIM',
+        //     freq: 15,
+        //     machine: 'ROTULADORA',
+        //     tec: "CICLANO ",
+        //     product: "S. Rajado",
+        // },
+        // {
+        //     id: 5,
+        //     activity: 'INSPECIONAR AJUSTE DAS ESTRELAS',
+        //     freq: 14,
+        //     machine: 'ENVASADORA',
+        //     tec: "Fulano ",
+        //     product: "Á. Sanitária",
+        // },
+        // {
+        //     id: 6,
+        //     activity: 'INSPECIONAR CORRENTE INFERIOR',
+        //     freq: 15,
+        //     machine: 'SOPRADORA',
+        //     tec: "Fulano ",
+        //     product: "Multiuso",
+        // },
+        // {
+        //     id: 7,
+        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
+        //     freq: 7,
+        //     machine: 'Chiler',
+        //     tec: "Beltrano",
+        //     product: "Detergente",
+        // },
+        // {
+        //     id: 8,
+        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
+        //     freq: 7,
+        //     machine: 'CHILER',
+        //     tec: "Beltrano",
+        //     product: "Á. Sanitária",
+        // },
+        // {
+        //     id: 0,
+        //     activity: 'INSPECIONAR CORRENTE INFERIOR',
+        //     freq: 15,
+        //     machine: 'SOPRADORA',
+        //     tec: "Fulano ",
+        //     product: "S. Glicerinado",
+        // },
+        // {
+        //     id: 1,
+        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
+        //     freq: 7,
+        //     machine: 'Chiler',
+        //     tec: "Beltrano",
+        //     product: "Detergente",
+        // },
+        // {
+        //     id: 2,
+        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
+        //     freq: 7,
+        //     machine: 'CHILER',
+        //     tec: "Beltrano",
+        //     product: "Multiuso",
+        // },
+        // {
+        //     id: 3,
+        //     activity: 'INSPECIONAR CORRENTE INFERIOR',
+        //     freq: 15,
+        //     machine: 'SOPRADORA',
+        //     tec: "Fulano ",
+        //     product: "S. Rajado",
+        // },
+        // {
+        //     id: 4,
+        //     activity: 'INSPECIONAR ROSCA SEM FIM',
+        //     product: "Á. Sanitária",
+        //     freq: 15,
+        //     machine: 'ROTULADORA',
+        //     tec: "CICLANO "
+        // },
+        // {
+        //     id: 5,
+        //     activity: 'INSPECIONAR AJUSTE DAS ESTRELAS',
+        //     freq: 14,
+        //     machine: 'ENVASADORA',
+        //     tec: "Fulano ",
+        //     product: "Desinfetante",
+        // },
+        // {
+        //     id: 6,
+        //     activity: 'INSPECIONAR CORRENTE INFERIOR',
+        //     freq: 15,
+        //     machine: 'SOPRADORA',
+        //     tec: "Fulano ",
+        //     product: "S.Glicerinado",
+        // },
+        // {
+        //     id: 7,
+        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
+        //     freq: 7,
+        //     machine: 'Chiler',
+        //     tec: "Beltrano",
+        //     product: "Detergente",
+        // },
+        // {
+        //     id: 8,
+        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
+        //     freq: 7,
+        //     machine: 'CHILER',
+        //     tec: "Beltrano",
+        //     product: "Desinfetante",
+        // },
+
+
+    // ]
+
+    // const getActivities = async () =>{
+    //     const auxDate = date.split('-');
+        
+    //     const month =parseInt(auxDate[1])
+
+
+    //     const result = await db.collection('scheduled_activities').doc(auxDate[0]).collection(month.toString()).doc(auxDate[2]).collection('activities').get();
+    //     setListsIds(result.docs.map( doc => doc.data().id_activity));
+
+    //     // for (let i = 0; i < listActivities.length; i++) {
+    //     //     const activityId = listActivities[i];
+    //     //     const activity =  await db.collection('activities').doc(activityId).get()
+    //     //     console.log(activity.data())
+    //     //     setActivities([activity.data(), ...activities])
+            
+    //     // }
+
+        
+    //     // return listActivities;
+    //     console.log("IDS2:",listIds)
+    // }
+
+    useEffect(  () => {
+        async function getActivities (){
+            const auxDate = date.split('-');
+            
+            const month =parseInt(auxDate[1])
+    
+    
+            const result = await db.collection('scheduled_activities').doc(auxDate[0]).collection(month.toString()).doc(auxDate[2]).collection('activities').get();
+            setListsIds(result.docs.map( doc => doc.data().id_activity));
+    
+    
+            console.log("IDS2:",listIds)
+        }
+
+        getActivities();
+
+        
+
+        // const unsubscribeActivityIds = db.collection('scheduled_activities').doc(auxDate[0]).collection(month.toString()).doc(auxDate[2]).collection('activities').onSnapshot( 
+        //     snapshot => setListsIds(snapshot.docs.map( doc => doc.data().id_activity)))
+        
+        // const unsubscribeActivity = db.collection('activities').onSnapshot( 
+        //         snapshot => setAuxActivities(snapshot.docs.filter( doc =>  listIds.includes(doc.id) )))
+
+
+    //         console.log("IDS",listIds)
+    //         console.log("ATV",activities)
+    //   return () => {
+    //       unsubscribeActivityIds()
+    //       unsubscribeActivity()
+
+    //   }
+    }, []);
+
 
     const changeMainFilter = (event) => {
         const value = event.target.value;
@@ -220,6 +282,8 @@ const ActivitiesList = (props) => {
               
                 <h3>{date}</h3>
 
+                {/* <button className='btn btn-primary' onClick={getActivities}> Buscar </button> */}
+
                 <div className='filter-activities col-5 d-flex align-content-center m-2'>
                     <label className='form-label m-2 '>
                         <i class="fas fa-filter"></i>
@@ -261,13 +325,12 @@ const ActivitiesList = (props) => {
                     </thead>
                     <tbody>
                         {
-
                             auxActivities.map((activity, i) => {
                                 return <tr key={i} onClick={() => setActivity(activity)} data-bs-toggle="modal" data-bs-target="#exampleModal">
                                     <td>{activity.product}</td>
-                                    <td>{activity.activity}</td>
-                                    <td>{activity.tec}</td>
-                                    <td>{activity.machine}</td>
+                                    <td>{activity.description}</td>
+                                    <td>{activity.tech}</td>
+                                    <td>{activity.type}</td>
                                 </tr>
                             })
                         }
