@@ -1,5 +1,5 @@
 import "./styles.css";
-import React from "react"
+import React, { useEffect, useState } from "react"
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -7,21 +7,27 @@ import interactionPlugin from '@fullcalendar/interaction'
 import ptLocale from '@fullcalendar/core/locales/pt-br'
 import { useHistory } from 'react-router-dom'
 import {db} from '../../firebase'
-// import { Calendar } from "@fullcalendar/core";
+
 
 function Calender() {
 
     const history = useHistory();
+    const [events, setEvents] = useState([]);
 
-    const getActvitiesList = async () => {
-        const ref = db.collection('scheduled_activities');
+ 
+
+    useEffect(()=> {
         const today = Date.now()
         const year = today.getYear();
         const month = today.getMonth() +1;
-        
-        const result =  await ref.doc(year+"-"+month).get()
-        console.log(result);
-    }
+
+        const unsubscribeActivities = db.collection('scheduled_activities').doc(year).collection(month).onSnapshot(snapshot => setEvents(snapshot.docs.map(doc => { return {...doc.data(), "date": year+'-'+month+'-'+doc.id, title: 'Atividade'}})));
+
+        return () => {
+            unsubscribeActivities()
+        }
+         
+    });
 
     const routeChange = (date) => {
         // console.log('Date', date)
@@ -46,10 +52,10 @@ function Calender() {
             selectable={true}
             selectMirror={true}
             dayMaxEvents={true}
-            eventClick={() => { getActvitiesList() }}
+            // eventClick={() => { getActvitiesList() }}
             dateClick={routeChange}
             eventContent={renderEventContent}
-            events={[{title: 'event 1', date: '2021-07-23'}, {title: 'event 2', date: '2021-07-24'}]}       
+            events={events}       
             
 
 
