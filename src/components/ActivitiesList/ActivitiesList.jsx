@@ -14,179 +14,9 @@ const ActivitiesList = (props) => {
     const [subFilter, setSubFilter] = useState('')
     const [filterValues, setFilterValues] = useState([])
     const [activities, setActivities] = useState([])
-    const [listIds, setListsIds] = useState([]);
     const [auxActivities, setAuxActivities] = useState(activities)
+    const [loading, setLoading] = useState(false)
 
-    // const activities = [
-        // {
-        //     id: 0,
-        //     activity: 'INSPECIONAR CORRENTE INFERIOR',
-        //     freq: 15,
-        //     machine: 'SOPRADORA',
-        //     tec: "Fulano ",
-        //     product: "Desinfetante",
-        // },
-        // {
-        //     id: 1,
-        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-        //     freq: 7,
-        //     machine: 'Chiler',
-        //     tec: "Beltrano",
-        //     product: "Á. Sanitária",
-        // },
-        // {
-        //     id: 2,
-        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-        //     freq: 7,
-        //     machine: 'CHILER',
-        //     tec: "Beltrano",
-        //     product: "Desinfetante",
-        // },
-        // {
-        //     id: 3,
-        //     activity: 'INSPECIONAR CORRENTE INFERIOR',
-        //     freq: 15,
-        //     machine: 'SOPRADORA',
-        //     tec: "Fulano ",
-        //     product: "S. Glicerinado",
-        // },
-        // {
-        //     id: 4,
-        //     activity: 'INSPECIONAR ROSCA SEM FIM',
-        //     freq: 15,
-        //     machine: 'ROTULADORA',
-        //     tec: "CICLANO ",
-        //     product: "S. Rajado",
-        // },
-        // {
-        //     id: 5,
-        //     activity: 'INSPECIONAR AJUSTE DAS ESTRELAS',
-        //     freq: 14,
-        //     machine: 'ENVASADORA',
-        //     tec: "Fulano ",
-        //     product: "Á. Sanitária",
-        // },
-        // {
-        //     id: 6,
-        //     activity: 'INSPECIONAR CORRENTE INFERIOR',
-        //     freq: 15,
-        //     machine: 'SOPRADORA',
-        //     tec: "Fulano ",
-        //     product: "Multiuso",
-        // },
-        // {
-        //     id: 7,
-        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-        //     freq: 7,
-        //     machine: 'Chiler',
-        //     tec: "Beltrano",
-        //     product: "Detergente",
-        // },
-        // {
-        //     id: 8,
-        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-        //     freq: 7,
-        //     machine: 'CHILER',
-        //     tec: "Beltrano",
-        //     product: "Á. Sanitária",
-        // },
-        // {
-        //     id: 0,
-        //     activity: 'INSPECIONAR CORRENTE INFERIOR',
-        //     freq: 15,
-        //     machine: 'SOPRADORA',
-        //     tec: "Fulano ",
-        //     product: "S. Glicerinado",
-        // },
-        // {
-        //     id: 1,
-        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-        //     freq: 7,
-        //     machine: 'Chiler',
-        //     tec: "Beltrano",
-        //     product: "Detergente",
-        // },
-        // {
-        //     id: 2,
-        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-        //     freq: 7,
-        //     machine: 'CHILER',
-        //     tec: "Beltrano",
-        //     product: "Multiuso",
-        // },
-        // {
-        //     id: 3,
-        //     activity: 'INSPECIONAR CORRENTE INFERIOR',
-        //     freq: 15,
-        //     machine: 'SOPRADORA',
-        //     tec: "Fulano ",
-        //     product: "S. Rajado",
-        // },
-        // {
-        //     id: 4,
-        //     activity: 'INSPECIONAR ROSCA SEM FIM',
-        //     product: "Á. Sanitária",
-        //     freq: 15,
-        //     machine: 'ROTULADORA',
-        //     tec: "CICLANO "
-        // },
-        // {
-        //     id: 5,
-        //     activity: 'INSPECIONAR AJUSTE DAS ESTRELAS',
-        //     freq: 14,
-        //     machine: 'ENVASADORA',
-        //     tec: "Fulano ",
-        //     product: "Desinfetante",
-        // },
-        // {
-        //     id: 6,
-        //     activity: 'INSPECIONAR CORRENTE INFERIOR',
-        //     freq: 15,
-        //     machine: 'SOPRADORA',
-        //     tec: "Fulano ",
-        //     product: "S.Glicerinado",
-        // },
-        // {
-        //     id: 7,
-        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-        //     freq: 7,
-        //     machine: 'Chiler',
-        //     tec: "Beltrano",
-        //     product: "Detergente",
-        // },
-        // {
-        //     id: 8,
-        //     activity: 'FIXAÇÃO DAS VARETAS: VERIFICAR O APERTO DA PORCA E CONTRA PORCA.',
-        //     freq: 7,
-        //     machine: 'CHILER',
-        //     tec: "Beltrano",
-        //     product: "Desinfetante",
-        // },
-
-
-    // ]
-
-    // const getActivities = async () =>{
-    //     const auxDate = date.split('-');
-        
-    //     const month =parseInt(auxDate[1])
-
-
-    //     const result = await db.collection('scheduled_activities').doc(auxDate[0]).collection(month.toString()).doc(auxDate[2]).collection('activities').get();
-    //     setListsIds(result.docs.map( doc => doc.data().id_activity));
-
-    //     // for (let i = 0; i < listActivities.length; i++) {
-    //     //     const activityId = listActivities[i];
-    //     //     const activity =  await db.collection('activities').doc(activityId).get()
-    //     //     console.log(activity.data())
-    //     //     setActivities([activity.data(), ...activities])
-            
-    //     // }
-
-        
-    //     // return listActivities;
-    //     console.log("IDS2:",listIds)
-    // }
 
     useEffect(  () => {
         async function getActivities (){
@@ -194,32 +24,23 @@ const ActivitiesList = (props) => {
             
             const month =parseInt(auxDate[1])
     
-    
-            const result = await db.collection('scheduled_activities').doc(auxDate[0]).collection(month.toString()).doc(auxDate[2]).collection('activities').get();
-            setListsIds(result.docs.map( doc => doc.data().id_activity));
-    
-    
-            console.log("IDS2:",listIds)
+            setLoading(true)
+             await db.collection('scheduled_activities').doc(auxDate[0]).collection(month.toString()).doc(auxDate[2]).collection('activities').get().then( async result => {
+                  await db.collection('activities').get().then(snap => { 
+                      setAuxActivities(snap.docs.filter( doc => 
+                        result.docs.map( doc => 
+                            doc.data().id_activity).includes(doc.id)).map( doc => 
+                                { return {...doc.data(), "id": doc.id}}));
+                    });
+             });
+            
+            setLoading(false)
+            
+            
         }
 
         getActivities();
-
         
-
-        // const unsubscribeActivityIds = db.collection('scheduled_activities').doc(auxDate[0]).collection(month.toString()).doc(auxDate[2]).collection('activities').onSnapshot( 
-        //     snapshot => setListsIds(snapshot.docs.map( doc => doc.data().id_activity)))
-        
-        // const unsubscribeActivity = db.collection('activities').onSnapshot( 
-        //         snapshot => setAuxActivities(snapshot.docs.filter( doc =>  listIds.includes(doc.id) )))
-
-
-    //         console.log("IDS",listIds)
-    //         console.log("ATV",activities)
-    //   return () => {
-    //       unsubscribeActivityIds()
-    //       unsubscribeActivity()
-
-    //   }
     }, []);
 
 
@@ -281,6 +102,10 @@ const ActivitiesList = (props) => {
             <div className='header-acitvities d-flex justify-content-between '>
               
                 <h3>{date}</h3>
+                {/* <h5>{"LOADING: "+loading}</h5>
+                <h5>{"IDS: "+listIds.length}</h5>
+                <h5>{"ACTIVITIES: "+auxActivities.length}</h5> */}
+
 
                 {/* <button className='btn btn-primary' onClick={getActivities}> Buscar </button> */}
 
