@@ -1,4 +1,3 @@
-import { parse } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'
 import { db } from '../../firebase';
@@ -9,13 +8,15 @@ const ActivitiesList = (props) => {
     const { date } = useParams()
 
     
-    const [infoActivity, setActivity] = useState({})
+    const [activity, setActivity] = useState({})
     const [filterValue, setFilterValue] = useState('0')
     const [subFilter, setSubFilter] = useState('')
     const [filterValues, setFilterValues] = useState([])
     const [activities, setActivities] = useState([])
-    const [auxActivities, setAuxActivities] = useState(activities)
+    const [auxActivities, setAuxActivities] = useState([])
     const [loading, setLoading] = useState(false)
+    const [machines, setMachines] = useState([]);
+    const [machine, setMachine] = useState();
 
 
     useEffect(  () => {
@@ -26,20 +27,46 @@ const ActivitiesList = (props) => {
     
             setLoading(true)
              await db.collection('scheduled_activities').doc(auxDate[0]).collection(month.toString()).doc(auxDate[2]).collection('activities').get().then( async result => {
-                  await db.collection('activities').get().then(snap => { 
-                      setAuxActivities(snap.docs.filter( doc => 
+                  await db.collection('activities').get().then( async snap => { 
+                      let activitiesAux = snap.docs.filter(  doc => 
                         result.docs.map( doc => 
                             doc.data().id_activity).includes(doc.id)).map( doc => 
-                                { return {...doc.data(), "id": doc.id}}));
+                                { return {...doc.data(), "id": doc.id}})
+                       setAuxActivities(activitiesAux);
+
+                       await db.collection('machines').get().then( snapMachine =>
+                        { 
+                            console.log(snapMachine)
+                            // console.log(auxActivities);
+                            setMachines(snapMachine.docs.filter( machine => 
+                           {  return activitiesAux.filter( activity =>{  return activity.machine === machine.id}).length > 0}).map(doc => 
+                                { return {...doc.data(), "id": doc.id}}))
+                        });
+
+
+                               
                     });
+                   
+
+               
+
+                    // console.log(auxActivities);
+                    // console.log(machines);
              });
+
+            
+
+             
             
             setLoading(false)
             
             
         }
+        
 
-        getActivities();
+
+        getActivities()
+        
         
     }, []);
 
@@ -86,15 +113,7 @@ const ActivitiesList = (props) => {
             default:
                 break;
         }
-
-
-
-
-
     }
-
-
-
 
 
     return (
@@ -105,6 +124,8 @@ const ActivitiesList = (props) => {
                 {/* <h5>{"LOADING: "+loading}</h5>
                 <h5>{"IDS: "+listIds.length}</h5>
                 <h5>{"ACTIVITIES: "+auxActivities.length}</h5> */}
+                {/* <h5>{"ACTIVITIES: "+auxActivities.length}</h5>
+                <h5>{"Machines: "+machines.length}</h5> */}
 
 
                 {/* <button className='btn btn-primary' onClick={getActivities}> Buscar </button> */}
@@ -142,30 +163,30 @@ const ActivitiesList = (props) => {
                 <table className="table  table-primary text-primary table-hover">
                     <thead className='header' >
                         <tr>
-                            <th scope="col" className="header">Produto</th>
+                            
                             <th scope="col" className="header">Atividade</th>
-                            <th scope="col" className="header">Técnico</th>
                             <th scope="col" className="header">Máquina</th>
+                            <th scope="col" className="header">Tipo Manutenção</th>
                         </tr>
                     </thead>
-                    <tbody>
+                   { loading ? <div><h6>Carregando...</h6></div> : <tbody>
                         {
                             auxActivities.map((activity, i) => {
-                                return <tr key={i} onClick={() => setActivity(activity)} data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                    <td>{activity.product}</td>
+                                return <tr key={i} onClick={() => {setActivity(activity); setMachine(machines.find( machine => machine.id === activity.machine))}} data-bs-toggle="modal" data-bs-target="#addActivity">
+                                    
                                     <td>{activity.description}</td>
-                                    <td>{activity.tech}</td>
+                                    <td>{machines.find( machine => machine.id === activity.machine).description}</td>
                                     <td>{activity.type}</td>
                                 </tr>
                             })
                         }
 
-                    </tbody>
+                    </tbody>}
                 </table>
 
             </div>
 
-            <Modal activity={infoActivity}></Modal>
+            {machine && activity ? <ActivityModal activity={activity}  machine={machine}></ActivityModal> : <div></div>}
         </div>
     )
 }
@@ -209,7 +230,7 @@ function Modal(props) {
                                 </div>
                                 <div className='mx-1'>
                                     <label htmlFor="" className="form-label">Paradas</label>
-                                    <input type="number" value={props.activity.freq} className="form-control" />
+                                    <input type="number" value={props.activity.freq} className="form-control" disabled/>
                                 </div>
                             </div>
                         </div>
@@ -241,4 +262,69 @@ function Modal(props) {
     )
 }
 
+function ActivityModal(props) {
+   
+    
+    return (
+        <div className="modal fade" id="addActivity" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog">
+                <form className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="exampleModalLabel">Descrição da Atividade</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body">
+                        <div className='m-2'>
+                            <label htmlFor="" className="form-label">Atividade</label>
+                            <input type="text"  className="form-control" required value ={props.activity.description} disabled/>
+                        </div>
+                        <div >
+                            <div className='m-2 '>
+                                <label htmlFor="" className="form-label">Máquina - Linha - Setor</label>
+                              
+                                 <input type="text"  className="form-control" required value ={props.machine.description+' - '+ props.machine.product +' - '+ props.machine.sector} disabled/>
+                               
+                            </div>
+                           
+                        </div>
+                        <div className="d-flex m-2 ">
+                            <div className="col-6">
+                                <label htmlFor="" className="form-label">Tipo de Manutenção</label>
+                                <input type="text"  className="form-control" required value ={props.activity.type} disabled/>
+                            </div>
+                            <div className="mx-1" >
+                                <label htmlFor="" className="form-label">Técnico</label>
+                                <input type="text"  className="form-control"  required value={props.activity.tech} disabled />
+                            </div>
+
+                            
+                        </div>
+                        <div className="d-flex m-2">
+                            <div className='col-6'>
+                                <div className=''>
+                                    <label htmlFor="" className="form-label col-4">Frequência</label>
+                                    <input type="number"  className="form-control" value={parseInt(props.activity.frequency)}  />
+                                </div>
+                                
+                            </div>
+                            {
+                                props.activity.type === 'LUBRIFICAÇÃO' ?  <div className="mx-1 " >
+                                <label htmlFor="" className="form-label">Lubrificante</label>
+                                <input type="text"  className="form-control" value={props.activity.lubricant} disabled/>
+                            </div>: <div></div>
+                            }
+                        </div>
+
+                    
+
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" className="btn btn-primary"   id="saveButton2" >Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    )
+}
 export default ActivitiesList
