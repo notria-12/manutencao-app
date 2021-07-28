@@ -17,6 +17,7 @@ const ActivitiesList = (props) => {
     const [loading, setLoading] = useState(false)
     const [machines, setMachines] = useState([]);
     const [machine, setMachine] = useState();
+    
 
 
     useEffect(  () => {
@@ -29,45 +30,33 @@ const ActivitiesList = (props) => {
              await db.collection('scheduled_activities').doc(auxDate[0]).collection(month.toString()).doc(auxDate[2]).collection('activities').get().then( async result => {
                   await db.collection('activities').get().then( async snap => { 
                       let activitiesAux = snap.docs.filter(  doc => 
-                        result.docs.map( doc => 
-                            doc.data().id_activity).includes(doc.id)).map( doc => 
+                        result.docs.map( scheduledActvities => 
+                            scheduledActvities.data().id_activity).includes(doc.id)).map( doc => 
                                 { return {...doc.data(), "id": doc.id}})
-                       setAuxActivities(activitiesAux);
+                                
+                                
+
+                                activitiesAux = activitiesAux.map( activity => {return {...activity, activityScheduled: result.docs.map( scheduledActvities => 
+                                    {return {...scheduledActvities.data(), activityScheduledId: scheduledActvities.id }}).find( scheduled => scheduled.id_activity === activity.id)}})
+                                setAuxActivities(activitiesAux);
 
                        await db.collection('machines').get().then( snapMachine =>
-                        { 
-                            console.log(snapMachine)
-                            // console.log(auxActivities);
+                        {
                             setMachines(snapMachine.docs.filter( machine => 
                            {  return activitiesAux.filter( activity =>{  return activity.machine === machine.id}).length > 0}).map(doc => 
                                 { return {...doc.data(), "id": doc.id}}))
                         });
-
-
                                
                     });
                    
-
-               
-
-                    // console.log(auxActivities);
-                    // console.log(machines);
              });
-
-            
-
-             
-            
+      
             setLoading(false)
-            
-            
+                      
         }
         
-
-
         getActivities()
-        
-        
+              
     }, []);
 
 
@@ -121,14 +110,6 @@ const ActivitiesList = (props) => {
             <div className='header-acitvities d-flex justify-content-between '>
               
                 <h3>{date}</h3>
-                {/* <h5>{"LOADING: "+loading}</h5>
-                <h5>{"IDS: "+listIds.length}</h5>
-                <h5>{"ACTIVITIES: "+auxActivities.length}</h5> */}
-                {/* <h5>{"ACTIVITIES: "+auxActivities.length}</h5>
-                <h5>{"Machines: "+machines.length}</h5> */}
-
-
-                {/* <button className='btn btn-primary' onClick={getActivities}> Buscar </button> */}
 
                 <div className='filter-activities col-5 d-flex align-content-center m-2'>
                     <label className='form-label m-2 '>
@@ -160,13 +141,14 @@ const ActivitiesList = (props) => {
 
             <div className='table-activities'>
 
-                <table className="table  table-primary text-primary table-hover">
-                    <thead className='header' >
+                <table className="table text-primary  table-hover">
+                    <thead className='header table-primary text-primary' >
                         <tr>
                             
                             <th scope="col" className="header">Atividade</th>
                             <th scope="col" className="header">Máquina</th>
-                            <th scope="col" className="header">Tipo Manutenção</th>
+                            <th scope="col" className="header">Status</th>
+                            
                         </tr>
                     </thead>
                    { loading ? <div><h6>Carregando...</h6></div> : <tbody>
@@ -176,7 +158,11 @@ const ActivitiesList = (props) => {
                                     
                                     <td>{activity.description}</td>
                                     <td>{machines.find( machine => machine.id === activity.machine).description}</td>
-                                    <td>{activity.type}</td>
+                                    <td>{activity.activityScheduled.status ? <div className='d-flex'><div  className=" bg-success rounded-circle mx-2" style={{height: '20px', width: '20px'}}></div>
+                                <label htmlFor="" className="">Finalizada</label></div> : <div className='d-flex'><div  className=" bg-danger rounded-circle mx-2" style={{height: '20px', width: '20px'}}></div>
+                                <label htmlFor="" className="">Pendente</label></div> }</td>
+                                    
+                                    
                                 </tr>
                             })
                         }
@@ -186,101 +172,48 @@ const ActivitiesList = (props) => {
 
             </div>
 
-            {machine && activity ? <ActivityModal activity={activity}  machine={machine}></ActivityModal> : <div></div>}
-        </div>
-    )
-}
-
-function Modal(props) {
-    // console.log('modal')
-    return (
-        <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title" id="exampleModalLabel">Descrição da Atividade</h5>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div className="modal-body">
-                        <div className='m-2'>
-                            <label htmlFor="" className="form-label">Atividade</label>
-                            <input type="text" value={props.activity.activity} className="form-control" />
-                        </div>
-                        <div className="d-flex  ">
-                            <div className='m-2 '>
-                                <label htmlFor="" className="form-label">Produto</label>
-                                <input type="text" value={props.activity.product} className="form-control" />
-                            </div>
-                            <div className='m-2 col-6'>
-                                <label htmlFor="" className="form-label">Mês/Ano</label>
-                                <input type="text" value={props.activity.tec} className="form-control" />
-                            </div>
-
-                        </div>
-                        <div className="d-flex">
-                            <div className='m-2'>
-                                <label htmlFor="" className="form-label">Técnico</label>
-                                <input type="text" value={props.activity.tec} className="form-control" />
-                            </div>
-
-                            <div className='m-2 d-flex col-6'>
-                                <div className='mx-1'>
-                                    <label htmlFor="" className="form-label col-4">Frequência</label>
-                                    <input type="number" value={props.activity.freq} className="form-control" />
-                                </div>
-                                <div className='mx-1'>
-                                    <label htmlFor="" className="form-label">Paradas</label>
-                                    <input type="number" value={props.activity.freq} className="form-control" disabled/>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="m-2">
-                            <label htmlFor="" className="form-label">Realizada em:</label>
-                        </div>
-                        <div className="d-flex m-2 border p-4 flex-wrap">
-                            {
-                                Array(30).fill(0).map((v, i) => {
-                                    return <div className="form-check m-1" key={i}>
-                                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                        <label className="form-check-label" for="flexCheckDefault">
-                                            {i + 1}
-                                        </label>
-                                    </div>
-                                })
-                            }
-                        </div>
-
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" className="btn btn-primary">Salvar</button>
-                    </div>
-                </div>
-            </div>
+            {machine && activity ? <ActivityModal activity={activity}  machine={machine} year={date.split('-')[0]} month={parseInt(date.split('-')[1]).toString()} day={date.split('-')[2]}></ActivityModal> : <div></div>}
         </div>
     )
 }
 
 function ActivityModal(props) {
-   
-    
+
+    const endActivity = async () =>{
+        // console.log(props.year)
+        // console.log(props.month)
+        // console.log(props.day)
+        // console.log(props.activity.id)
+       await  db.collection('scheduled_activities').doc(props.year).collection(props.month).doc(props.day).collection('activities').doc(props.activity.activityScheduled.activityScheduledId).update({status: 1});
+       window.location.reload();
+    }
+      
     return (
         <div className="modal fade" id="addActivity" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog">
                 <form className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title" id="exampleModalLabel">Descrição da Atividade</h5>
+                        <h5 className="modal-title fw-bold " id="exampleModalLabel">Descrição da Atividade</h5>
+                       
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
+                       { !props.activity.activityScheduled.status ? <div className="d-flex justify-content-center ">
+                                <label htmlFor="" className="form-label fw-bold fs-6">Status:</label>
+                                <div  className=" bg-danger rounded-circle mx-2" style={{height: '20px', width: '20px'}}></div>
+                                <label htmlFor="" className="">Pendente</label>
+                        </div> :  <div className="d-flex justify-content-center ">
+                                <label htmlFor="" className="form-label fw-bold fs-6">Status:</label>
+                                <div  className=" bg-success rounded-circle mx-2" style={{height: '20px', width: '20px'}}></div>
+                                <label htmlFor="" className="">Finalizada</label>
+                        </div>}
                         <div className='m-2'>
-                            <label htmlFor="" className="form-label">Atividade</label>
+                            <label htmlFor="" className="form-label fw-bold">Atividade</label>
                             <input type="text"  className="form-control" required value ={props.activity.description} disabled/>
                         </div>
                         <div >
                             <div className='m-2 '>
-                                <label htmlFor="" className="form-label">Máquina - Linha - Setor</label>
+                                <label htmlFor="" className="form-label fw-bold">Máquina - Linha - Setor</label>
                               
                                  <input type="text"  className="form-control" required value ={props.machine.description+' - '+ props.machine.product +' - '+ props.machine.sector} disabled/>
                                
@@ -289,38 +222,45 @@ function ActivityModal(props) {
                         </div>
                         <div className="d-flex m-2 ">
                             <div className="col-6">
-                                <label htmlFor="" className="form-label">Tipo de Manutenção</label>
+                                <label htmlFor="" className="form-label fw-bold">Tipo de Manutenção</label>
                                 <input type="text"  className="form-control" required value ={props.activity.type} disabled/>
                             </div>
                             <div className="mx-1" >
-                                <label htmlFor="" className="form-label">Técnico</label>
+                                <label htmlFor="" className="form-label fw-bold">Técnico</label>
                                 <input type="text"  className="form-control"  required value={props.activity.tech} disabled />
                             </div>
-
-                            
+                           
                         </div>
                         <div className="d-flex m-2">
                             <div className='col-6'>
                                 <div className=''>
-                                    <label htmlFor="" className="form-label col-4">Frequência</label>
+                                    <label htmlFor="" className="form-label col-4 fw-bold">Frequência</label>
                                     <input type="number"  className="form-control" value={parseInt(props.activity.frequency)}  />
                                 </div>
                                 
                             </div>
                             {
                                 props.activity.type === 'LUBRIFICAÇÃO' ?  <div className="mx-1 " >
-                                <label htmlFor="" className="form-label">Lubrificante</label>
+                                <label htmlFor="" className="form-label fw-bold">Lubrificante</label>
                                 <input type="text"  className="form-control" value={props.activity.lubricant} disabled/>
                             </div>: <div></div>
                             }
                         </div>
-
-                    
+                               
 
                     </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" className="btn btn-primary"   id="saveButton2" >Salvar</button>
+                    <div className="modal-footer d-flex justify-content-start">
+                    <div className="d-flex align-items-center">
+                            
+                            {/* <div className='d-flex justify-content-center'> */}
+                            <label htmlFor="" className="form-label fw-bold fs-6 m-2">Ação: </label>
+                            {/* </div> */}
+                            <select className="form-select" aria-label="Default select example" >
+                                    <option selected value="0">Gerar Formulário</option>
+                                    <option value="1">Marcar como concluída</option>
+                                </select>
+                        </div>
+                        <button type="button" className="btn btn-primary"   id="concludeButton" onClick={() => endActivity()}>CONCLUIR</button>
                     </div>
                 </form>
             </div>

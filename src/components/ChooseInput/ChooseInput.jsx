@@ -11,7 +11,7 @@ const ChooseInput = () =>{
                <div className='card-body p-2'>
                  <div  className='d-flex flex-column align-items-center'>
                     <img src={pcpImg} alt="" height="400px"/>
-                    <p>Sou assistente de PCP e desejo acessar a área administrativa</p>
+                    <p>Sou assistente de PCM e desejo acessar a área administrativa</p>
                      <Link to='/login'> <button className='btn btn-primary'>Ir para o Login</button></Link>
                  </div>
                </div>

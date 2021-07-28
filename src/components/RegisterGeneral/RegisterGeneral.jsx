@@ -73,7 +73,7 @@ const RegisterGeneral = (props) => {
                                 }
                             </tbody>
                         </table>
-                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => { setMachine(undefined); setType(0); }}><i class="fas fa-plus-circle"></i> Nova Máquina</button>
+                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => { setMachine(undefined); setType(0); }}><i className="fas fa-plus-circle"></i> Nova Máquina</button>
                     </div>
                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <table className='table table-primary'>
