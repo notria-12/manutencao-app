@@ -7,6 +7,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import ptLocale from '@fullcalendar/core/locales/pt-br'
 import { useHistory } from 'react-router-dom'
 import {db} from '../../firebase'
+import {  getMonth, getYear } from "date-fns";
 
 
 function Calender() {
@@ -14,23 +15,22 @@ function Calender() {
     const history = useHistory();
     const [events, setEvents] = useState([]);
 
- 
+    
 
     useEffect(()=> {
-        const today = Date.now()
-        const year = today.getYear();
-        const month = today.getMonth() +1;
+      const today = Date.now();
+      const year = getYear(today);
+      const month = getMonth(today) + 1;
 
-        const unsubscribeActivities = db.collection('scheduled_activities').doc(year).collection(month).onSnapshot(snapshot => setEvents(snapshot.docs.map(doc => { return {...doc.data(), "date": year+'-'+month+'-'+doc.id, title: 'Atividade'}})));
-
+        const unsubscribeActivities = db.collection('scheduled_activities').doc(year.toString()).collection(month.toString()).onSnapshot(snapshot => setEvents(snapshot.docs.map(doc => {  return { "date": year+'-0'+month+'-'+doc.id, title: 'Atividades pra este dia'}})));
+        console.log(events)
         return () => {
             unsubscribeActivities()
         }
          
-    });
+    }, []);
 
     const routeChange = (date) => {
-        // console.log('Date', date)
         let path = `/home/activities/${date.dateStr}`
         history.push(path)
     }
@@ -52,7 +52,7 @@ function Calender() {
             selectable={true}
             selectMirror={true}
             dayMaxEvents={true}
-            // eventClick={() => { getActvitiesList() }}
+            // eventClick={getActivies }
             dateClick={routeChange}
             eventContent={renderEventContent}
             events={events}       
@@ -66,8 +66,6 @@ function Calender() {
 }
 
 function renderEventContent(eventInfo) {
-    console.log('CHAMOU')
-
     return (
       <>
         <b>{eventInfo.timeText}</b>

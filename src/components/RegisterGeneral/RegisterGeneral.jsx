@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {db} from '../../firebase'
 
 const RegisterGeneral = (props) => {
@@ -73,13 +73,14 @@ const RegisterGeneral = (props) => {
                                 }
                             </tbody>
                         </table>
-                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => { setMachine(undefined); setType(0); }}><i class="fas fa-plus-circle"></i> Nova Máquina</button>
+                        <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => { setMachine(undefined); setType(0); }}><i className="fas fa-plus-circle"></i> Nova Máquina</button>
                     </div>
                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <table className='table table-primary'>
                             <thead className='header'>
                                 <th>Descrição</th>
                                 <th>Máquina</th>
+                                <th>Setor</th>
 
                                 {/* <th>Linha de Produção</th> */}
                                 
@@ -91,8 +92,9 @@ const RegisterGeneral = (props) => {
                                         return(
                                             <tr key={i}>
                                                 <td>{activity.description}</td>
-                                                <td>{activity.description}</td>
-                                                {/* <td>{machines.find( machine => machine.id === activity.machine ).description}</td> */}
+                                                {/* <td>{activity.description}</td> */}
+                                                {machines.length > 0 ? <td>{machines.find( machine => machine.id === activity.machine ).description}</td> : <td>TESTE</td>}
+                                                {machines.length > 0 ? <td>{machines.find( machine => machine.id === activity.machine ).sector}</td> : <td>TESTE</td>}
                                                 
                                                 <td>
                                                     <div>
