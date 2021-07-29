@@ -22,7 +22,7 @@ function Calender() {
       const year = getYear(today);
       const month = getMonth(today) + 1;
 
-        const unsubscribeActivities = db.collection('scheduled_activities').doc(year.toString()).collection(month.toString()).onSnapshot(snapshot => setEvents(snapshot.docs.map(doc => {  return { "date": year+'-0'+month+'-'+doc.id, title: '2 Atividades pra este dia'}})));
+        const unsubscribeActivities = db.collection('scheduled_activities').doc(year.toString()).collection(month.toString()).onSnapshot(snapshot => setEvents(snapshot.docs.map(doc => {  return { "date": year+'-0'+month+'-'+doc.id, title: 'Atividades pra este dia'}})));
         console.log(events)
         return () => {
             unsubscribeActivities()

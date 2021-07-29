@@ -80,6 +80,7 @@ const RegisterGeneral = (props) => {
                             <thead className='header'>
                                 <th>Descrição</th>
                                 <th>Máquina</th>
+                                <th>Setor</th>
 
                                 {/* <th>Linha de Produção</th> */}
                                 
@@ -91,8 +92,9 @@ const RegisterGeneral = (props) => {
                                         return(
                                             <tr key={i}>
                                                 <td>{activity.description}</td>
-                                                <td>{activity.description}</td>
-                                                {/* <td>{machines.find( machine => machine.id === activity.machine ).description}</td> */}
+                                                {/* <td>{activity.description}</td> */}
+                                                {machines.length > 0 ? <td>{machines.find( machine => machine.id === activity.machine ).description}</td> : <td>TESTE</td>}
+                                                {machines.length > 0 ? <td>{machines.find( machine => machine.id === activity.machine ).sector}</td> : <td>TESTE</td>}
                                                 
                                                 <td>
                                                     <div>
