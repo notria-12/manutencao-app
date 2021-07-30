@@ -70,13 +70,12 @@ const ActivitiesList = (props) => {
         switch (value) {
             case '1':
                 setFilterValues(machines.map( machine => machine.description))
+                setFilterValue('1')
                 break;
             case '2':
                 setFilterValues(['MECÂNICA', 'LUBRIFICAÇÃO', 'ELÉTRICA'])
                 break;
-            // case '3':
-            //     setFilterValues(['Á. Sanitária', 'S. Rajado', 'Desinfetante', 'S. Glicerinado', 'Multiuso', 'Detergente'])
-            //     break;
+            
             default:
                 setAuxActivities(activities)
                 break;
@@ -106,6 +105,12 @@ const ActivitiesList = (props) => {
         }
     }
 
+    const generateFormActivities = (title) =>{
+        console.log(auxActivities);
+
+        db.collection('activities_forms').doc().set({list: auxActivities.map( activity => activity.activityScheduled), finalized: false, date, title}).then(() => console.log('Finalizou'));
+
+    }
 
     return (
         <div className='activities'>
@@ -141,7 +146,7 @@ const ActivitiesList = (props) => {
                 </div>
 
                 <div>
-                    <button className='btn btn-primary'>GERAR FORMULÁRIO</button>
+                    <button className='btn btn-primary'data-bs-toggle="modal" data-bs-target="#addTitle">GERAR FORMULÁRIO</button>
                 </div>
             </div>
 
@@ -179,6 +184,35 @@ const ActivitiesList = (props) => {
             </div>
 
             {machine && activity ? <ActivityModal activity={activity}  machine={machine} year={date.split('-')[0]} month={parseInt(date.split('-')[1]).toString()} day={date.split('-')[2]}></ActivityModal> : <div></div>}
+            <Modal generateForm={generateFormActivities}></Modal>
+        </div>
+    )
+}
+
+function Modal(props) {
+    const [title, setTitle] = useState('')
+
+    return (
+        <div className="modal fade" id="addTitle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="exampleModalLabel">Formulário de Atividades</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body">
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style={{height: '100px'}} value={title} onChange={ (e) => setTitle(e.target.value)} required></textarea>
+                            <label for="floatingTextarea2">Título do Formulário</label>
+                        </div>
+
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" className="btn btn-primary" onClick={() => props.generateForm(title)}>Enviar</button>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }
@@ -186,10 +220,7 @@ const ActivitiesList = (props) => {
 function ActivityModal(props) {
 
     const endActivity = async () =>{
-        // console.log(props.year)
-        // console.log(props.month)
-        // console.log(props.day)
-        // console.log(props.activity.id)
+       
        await  db.collection('scheduled_activities').doc(props.year).collection(props.month).doc(props.day).collection('activities').doc(props.activity.activityScheduled.activityScheduledId).update({status: 1});
        window.location.reload();
     }
