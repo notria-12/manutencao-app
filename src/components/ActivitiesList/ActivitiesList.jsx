@@ -13,7 +13,7 @@ const ActivitiesList = (props) => {
     const [subFilter, setSubFilter] = useState('')
     const [filterValues, setFilterValues] = useState([])
     const [activities, setActivities] = useState([])
-    const [auxActivities, setAuxActivities] = useState([])
+    const [auxActivities, setAuxActivities] = useState(activities)
     const [loading, setLoading] = useState(false)
     const [machines, setMachines] = useState([]);
     const [machine, setMachine] = useState();
@@ -38,6 +38,8 @@ const ActivitiesList = (props) => {
 
                                 activitiesAux = activitiesAux.map( activity => {return {...activity, activityScheduled: result.docs.map( scheduledActvities => 
                                     {return {...scheduledActvities.data(), activityScheduledId: scheduledActvities.id }}).find( scheduled => scheduled.id_activity === activity.id)}})
+                                
+                                setActivities(activitiesAux);
                                 setAuxActivities(activitiesAux);
 
                        await db.collection('machines').get().then( snapMachine =>
@@ -67,14 +69,14 @@ const ActivitiesList = (props) => {
 
         switch (value) {
             case '1':
-                setFilterValues(['SOPRADORA', 'CHILER', 'ROTULADORA', 'ENVASADORA'])
+                setFilterValues(machines.map( machine => machine.description))
                 break;
             case '2':
-                setFilterValues(['FULANO', 'CICLANO', 'BELTRANO'])
+                setFilterValues(['MECÂNICA', 'LUBRIFICAÇÃO', 'ELÉTRICA'])
                 break;
-            case '3':
-                setFilterValues(['Á. Sanitária', 'S. Rajado', 'Desinfetante', 'S. Glicerinado', 'Multiuso', 'Detergente'])
-                break;
+            // case '3':
+            //     setFilterValues(['Á. Sanitária', 'S. Rajado', 'Desinfetante', 'S. Glicerinado', 'Multiuso', 'Detergente'])
+            //     break;
             default:
                 setAuxActivities(activities)
                 break;
@@ -90,14 +92,14 @@ const ActivitiesList = (props) => {
 
         switch (filterValue) {
             case '1':
-                setAuxActivities(activities.filter(activity => activity.machine.toUpperCase() === value))
+                setAuxActivities(activities.filter(activity => machines.find( machine => machine.id === activity.machine).description === value ))
                 break;
             case '2':
-                console.log(value)
-                setAuxActivities(activities.filter(activity => activity.tec.toUpperCase() === value))
+                
+                setAuxActivities(activities.filter(activity => activity.type === value))
                 break;
-            case '3':
-                setAuxActivities(activities.filter(activity => activity.product === value))
+            case '0':
+                setAuxActivities(activities);
                 break;
             default:
                 break;
@@ -117,10 +119,10 @@ const ActivitiesList = (props) => {
                     </label>
 
                     <select class="form-select mx-2" aria-label="Default select example" value={filterValue} onChange={changeMainFilter}>
-                        <option selected value="0">Selecione um filtro...</option>
+                        <option selected value="0">Todas Atividades</option>
                         <option value="1">Máquina</option>
-                        <option value="2">Técnico</option>
-                        <option value="3">Produto</option>
+                        <option value="2">Tipo Manutenção</option>
+                        
                     </select>
 
                     {
@@ -136,6 +138,10 @@ const ActivitiesList = (props) => {
                     }
 
 
+                </div>
+
+                <div>
+                    <button className='btn btn-primary'>GERAR FORMULÁRIO</button>
                 </div>
             </div>
 
