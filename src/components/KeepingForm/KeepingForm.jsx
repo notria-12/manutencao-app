@@ -8,54 +8,7 @@ import './KeepingForm.css'
 const KeepingForm = () => {
     const {activity_id} = useParams();
 
-    // const activities = [
-    //     {
-    //         "activity": 'CORREIA DO SERVO DA PRENSA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-    //         "status": 3,
-    //         'item': 1
-    //     },
-    //     {
-    //         "activity": 'CORREIA DO SERVO DO ESTIRAMENTO: VERIFICAR A TENSÃO DA CORREIA, A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-    //         "status": 3,
-    //         "item": 2
-    //     },
-    //     {
-    //         "activity": 'CORREIA DA TRAÇÃO DO ESTIRAMENTO: VERIFICAR A TENSÃO DA CORREIA, A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-    //         "status": 3,
-    //         "item": 3
-    //     },
-    //     // {
-    //     //     "activity": 'ALTURA DOS BOCAIS: COM A PRENSA FECHADA E TRÊS PRÉ-FORMAS DENTRO ABAIXAR OS BOCAIS; ACIONAR CARGA E SOPRO LIBERAR O APERTO DO EIXO DO PISTÃO DO BOCAL ATÉ COMECE A VAZAR ENTÃO APERTAR ¼ DE VOLTA.',
-    //     //     "status": 3,
-    //     //     "item": 4
-    //     // },
-    //     // {
-    //     //     "activity": 'ALINHAMENTO RÉGUA/ PRENSA: COM A PRENSA FECHADA VERIFICAR A CENTRALIZAÇÃO DA RÉGUA NO MOLDE.',
-    //     //     "status": 3,
-    //     //     "item": 5
-    //     // },
-    //     // {
-    //     //     "activity": 'ALTURA RÉGUA/PRENSA: COM A PRENSA FECHADA E TRÊS PRÉ-FORMAS DENTRO FECHAR A RÉGUA COM ELA AVANÇADA E DEPOIS RECUADA AS PINÇAS DEVEM PEGAR A PRÉ-FORMA NA REGIÃO DO LACRE.',
-    //     //     "status": 3,
-    //     //     "item": 6
-    //     // },
-    //     // {
-    //     //     "activity": 'CORREIA DO SERVO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-    //     //     "status": 3,
-    //     //     "item": 7
-    //     // },
-    //     // {
-    //     //     "activity": 'CORREIA DA TRAÇÃO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-    //     //     "status": 3,
-    //     //     "item": 8
-    //     // },
-    //     // {
-    //     //     "activity": 'CORREIA DA TRAÇÃO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-    //     //     "status": 3,
-    //     //     "item": 9
-    //     // }
-    // ]
-
+    
     const [current, setCurrent] = useState(0)
     const [disableBackButton, setDisableBackButton] = useState(false)
     const [isLastPage, setIsLastPage] = useState(false)
@@ -75,7 +28,7 @@ const KeepingForm = () => {
                         forms.list.map( formActivity => 
                             formActivity.id_activity).includes(doc.id)).map( doc => 
                                 { return {...doc.data(), "id": doc.id}})
-                                console.log("Actv",auxActivities)
+                                
                                 setActivities(auxActivities);
                         
                             await db.collection('machines').get().then( snapMachine =>
@@ -125,9 +78,10 @@ const KeepingForm = () => {
                     </div>
                     <h1>Manutenção preventiva </h1>
                 </div>
+
                 <div className='card m-2 col-10'>
                     <div className="card-body">
-                        <div className='d-flex justify-content-between m-2' >
+                        {/* <div className='d-flex justify-content-between m-2' >
                             <div className='m-2 d-flex align-items-center'>
                                 <label htmlFor="" className='label-form me-1'>Linha: </label>
                                 <select name="" id="" className='form-select'>
@@ -149,31 +103,33 @@ const KeepingForm = () => {
                                     <option value="">ENVASADORA</option>
                                 </select>
                             </div>
-                        </div>
+                        </div> */}
+                        <h3>Atividades</h3>
                         {
                             activities.map((activity, i) => {
-                                return <div className='card d-flex flex-row align-items-center m-1' key={i}>
+                                return <div className='card d-flex flex-row align-items-center justify-content-between my-1' key={i}>
+                                    
+                                    <label htmlFor="" className="align-self-start">{machines.find( machine => machine.id === activity.machine).description}</label>
                                     <div className='item-number'>
-                                        <h5>{activity.item}</h5>
+                                        
+                                        <h5>{i+1}</h5>
                                     </div>
-
+                                    
+                                    <div className='d-flex justify-content-between w-100 align-items-center'>
                                     <div className=' p-2'>
                                         <h6>
                                             {activity.description}
                                         </h6>
-                                    </div>
+                                    </div >
                                     <div className='p-2'>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name={"flexRadioDefault"+i} id={"flexRadioDefault"+i} />
-                                            <label class="form-check-label" for="flexRadioDefault1">
-                                                OK
-                                        </label>
+                                            <label class="form-check-label" for="flexRadioDefault1">OK</label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name={"flexRadioDefault"+i} id={"flexRadioDefault"+i} />
                                             <label class="form-check-label" for="flexRadioDefault1">
-                                                Não
-                                        </label>
+                                                Não</label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name={"flexRadioDefault"+i} id={"flexRadioDefault"+i} />
@@ -181,9 +137,9 @@ const KeepingForm = () => {
                                                 ...
                                         </label>
                                         </div>
-
-
                                     </div>
+                                    </div>
+                                    
 
 
                                 </div>

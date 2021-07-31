@@ -1,8 +1,6 @@
 
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import pcpImg from '../../assets/images/pcp_assistent.png'
-import operador from '../../assets/images/operator.png'
 import { db } from '../../firebase'
 
 const ChooseForm = () =>{

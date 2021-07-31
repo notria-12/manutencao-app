@@ -1,7 +1,7 @@
 .keeping-form .item-number{
-    border-bottom: cyan solid 1px;
-    border-top: cyan solid 1px;
-    border-right: cyan solid 1px;
+    border-bottom: #0099ffe5 solid 1px;
+    border-top: #0099ffe5 solid 1px;
+    border-right: #0099ffe5 solid 1px;
     width: 3.5%;
     
 }
