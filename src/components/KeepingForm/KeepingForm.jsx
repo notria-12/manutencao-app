@@ -1,63 +1,96 @@
 
 import React, { useState } from 'react'
 import { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import { db } from '../../firebase'
 import './KeepingForm.css'
 
 const KeepingForm = () => {
+    const {activity_id} = useParams();
 
-    const activities = [
-        {
-            "activity": 'CORREIA DO SERVO DA PRENSA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-            "status": 3,
-            'item': 1
-        },
-        {
-            "activity": 'CORREIA DO SERVO DO ESTIRAMENTO: VERIFICAR A TENSÃO DA CORREIA, A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-            "status": 3,
-            "item": 2
-        },
-        {
-            "activity": 'CORREIA DA TRAÇÃO DO ESTIRAMENTO: VERIFICAR A TENSÃO DA CORREIA, A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-            "status": 3,
-            "item": 3
-        },
-        // {
-        //     "activity": 'ALTURA DOS BOCAIS: COM A PRENSA FECHADA E TRÊS PRÉ-FORMAS DENTRO ABAIXAR OS BOCAIS; ACIONAR CARGA E SOPRO LIBERAR O APERTO DO EIXO DO PISTÃO DO BOCAL ATÉ COMECE A VAZAR ENTÃO APERTAR ¼ DE VOLTA.',
-        //     "status": 3,
-        //     "item": 4
-        // },
-        // {
-        //     "activity": 'ALINHAMENTO RÉGUA/ PRENSA: COM A PRENSA FECHADA VERIFICAR A CENTRALIZAÇÃO DA RÉGUA NO MOLDE.',
-        //     "status": 3,
-        //     "item": 5
-        // },
-        // {
-        //     "activity": 'ALTURA RÉGUA/PRENSA: COM A PRENSA FECHADA E TRÊS PRÉ-FORMAS DENTRO FECHAR A RÉGUA COM ELA AVANÇADA E DEPOIS RECUADA AS PINÇAS DEVEM PEGAR A PRÉ-FORMA NA REGIÃO DO LACRE.',
-        //     "status": 3,
-        //     "item": 6
-        // },
-        // {
-        //     "activity": 'CORREIA DO SERVO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-        //     "status": 3,
-        //     "item": 7
-        // },
-        // {
-        //     "activity": 'CORREIA DA TRAÇÃO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-        //     "status": 3,
-        //     "item": 8
-        // },
-        // {
-        //     "activity": 'CORREIA DA TRAÇÃO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-        //     "status": 3,
-        //     "item": 9
-        // }
-    ]
+    // const activities = [
+    //     {
+    //         "activity": 'CORREIA DO SERVO DA PRENSA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
+    //         "status": 3,
+    //         'item': 1
+    //     },
+    //     {
+    //         "activity": 'CORREIA DO SERVO DO ESTIRAMENTO: VERIFICAR A TENSÃO DA CORREIA, A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
+    //         "status": 3,
+    //         "item": 2
+    //     },
+    //     {
+    //         "activity": 'CORREIA DA TRAÇÃO DO ESTIRAMENTO: VERIFICAR A TENSÃO DA CORREIA, A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
+    //         "status": 3,
+    //         "item": 3
+    //     },
+    //     // {
+    //     //     "activity": 'ALTURA DOS BOCAIS: COM A PRENSA FECHADA E TRÊS PRÉ-FORMAS DENTRO ABAIXAR OS BOCAIS; ACIONAR CARGA E SOPRO LIBERAR O APERTO DO EIXO DO PISTÃO DO BOCAL ATÉ COMECE A VAZAR ENTÃO APERTAR ¼ DE VOLTA.',
+    //     //     "status": 3,
+    //     //     "item": 4
+    //     // },
+    //     // {
+    //     //     "activity": 'ALINHAMENTO RÉGUA/ PRENSA: COM A PRENSA FECHADA VERIFICAR A CENTRALIZAÇÃO DA RÉGUA NO MOLDE.',
+    //     //     "status": 3,
+    //     //     "item": 5
+    //     // },
+    //     // {
+    //     //     "activity": 'ALTURA RÉGUA/PRENSA: COM A PRENSA FECHADA E TRÊS PRÉ-FORMAS DENTRO FECHAR A RÉGUA COM ELA AVANÇADA E DEPOIS RECUADA AS PINÇAS DEVEM PEGAR A PRÉ-FORMA NA REGIÃO DO LACRE.',
+    //     //     "status": 3,
+    //     //     "item": 6
+    //     // },
+    //     // {
+    //     //     "activity": 'CORREIA DO SERVO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
+    //     //     "status": 3,
+    //     //     "item": 7
+    //     // },
+    //     // {
+    //     //     "activity": 'CORREIA DA TRAÇÃO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
+    //     //     "status": 3,
+    //     //     "item": 8
+    //     // },
+    //     // {
+    //     //     "activity": 'CORREIA DA TRAÇÃO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
+    //     //     "status": 3,
+    //     //     "item": 9
+    //     // }
+    // ]
 
     const [current, setCurrent] = useState(0)
     const [disableBackButton, setDisableBackButton] = useState(false)
     const [isLastPage, setIsLastPage] = useState(false)
+    const [activities, setActivities]= useState([])
+    const [machines, setMachines] = useState([])
+
 
     useEffect(() => {
+
+        async function getForms(){
+
+            await db.collection('activities_forms').doc(activity_id).get().then( async snapForm => {
+                const forms = snapForm.data();
+                // setReferenceForActivities(forms.list);
+                await db.collection('activities').get().then( async snapActivities => {
+                    let auxActivities =  snapActivities.docs.filter(  doc => 
+                        forms.list.map( formActivity => 
+                            formActivity.id_activity).includes(doc.id)).map( doc => 
+                                { return {...doc.data(), "id": doc.id}})
+                                console.log("Actv",auxActivities)
+                                setActivities(auxActivities);
+                        
+                            await db.collection('machines').get().then( snapMachine =>
+                            {
+                                setMachines(snapMachine.docs.filter( machine => 
+                                {  return auxActivities.filter( activity =>{  return activity.machine === machine.id}).length > 0}).map(doc => 
+                                    { return {...doc.data(), "id": doc.id}}))
+                            });
+                })
+
+               
+            })
+        }
+        getForms()
+
         if (current < 4) {
             setDisableBackButton(true)
         } else {
@@ -71,14 +104,14 @@ const KeepingForm = () => {
         }
 
         // if(current >)
-    }, [current]);
+    }, []);
 
 
-    const addActivity = (activityDesc) =>{
-        const activity = { activity: activityDesc, item: activities.length+1, status: 3};
+    // const addActivity = (activityDesc) =>{
+    //     const activity = { activity: activityDesc, item: activities.length+1, status: 3};
 
-        activities.push(activity);
-    }
+    //     activities.push(activity);
+    // }
 
     return (
         <div className='keeping-form'>
@@ -118,7 +151,7 @@ const KeepingForm = () => {
                             </div>
                         </div>
                         {
-                            activities.filter(activity => activity.item > current && activity.item <= (current + 4)).map((activity, i) => {
+                            activities.map((activity, i) => {
                                 return <div className='card d-flex flex-row align-items-center m-1' key={i}>
                                     <div className='item-number'>
                                         <h5>{activity.item}</h5>
@@ -126,7 +159,7 @@ const KeepingForm = () => {
 
                                     <div className=' p-2'>
                                         <h6>
-                                            {activity.activity}
+                                            {activity.description}
                                         </h6>
                                     </div>
                                     <div className='p-2'>
@@ -178,9 +211,9 @@ const KeepingForm = () => {
                     </div>
                 </div>
             </div>
-            <Modal addActivity={addActivity}>
+            {/* <Modal addActivity={addActivity}>
 
-            </Modal>
+            </Modal> */}
         </div>
     )
 }
