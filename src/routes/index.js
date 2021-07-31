@@ -1,5 +1,6 @@
 import ActivitiesList from "../components/ActivitiesList/ActivitiesList";
 import Anomalies from "../components/Anomalies/Anomalies";
+import ChooseForm from "../components/ChooseForm/ChooseForm";
 import ChooseInput from "../components/ChooseInput/ChooseInput";
 import Home from "../components/Home";
 import Calender from "../components/Home/Calender";
@@ -36,8 +37,12 @@ const routes = [
         ]
     }, 
     {
-        path: '/keeping',
+        path: '/keeping/:activity_id',
         component: KeepingForm
+    },
+    {
+        path: '/forms',
+        component: ChooseForm
     },
      {
         path: '/',

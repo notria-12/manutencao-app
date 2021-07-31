@@ -21,36 +21,36 @@ const KeepingForm = () => {
             "status": 3,
             "item": 3
         },
-        {
-            "activity": 'ALTURA DOS BOCAIS: COM A PRENSA FECHADA E TRÊS PRÉ-FORMAS DENTRO ABAIXAR OS BOCAIS; ACIONAR CARGA E SOPRO LIBERAR O APERTO DO EIXO DO PISTÃO DO BOCAL ATÉ COMECE A VAZAR ENTÃO APERTAR ¼ DE VOLTA.',
-            "status": 3,
-            "item": 4
-        },
-        {
-            "activity": 'ALINHAMENTO RÉGUA/ PRENSA: COM A PRENSA FECHADA VERIFICAR A CENTRALIZAÇÃO DA RÉGUA NO MOLDE.',
-            "status": 3,
-            "item": 5
-        },
-        {
-            "activity": 'ALTURA RÉGUA/PRENSA: COM A PRENSA FECHADA E TRÊS PRÉ-FORMAS DENTRO FECHAR A RÉGUA COM ELA AVANÇADA E DEPOIS RECUADA AS PINÇAS DEVEM PEGAR A PRÉ-FORMA NA REGIÃO DO LACRE.',
-            "status": 3,
-            "item": 6
-        },
-        {
-            "activity": 'CORREIA DO SERVO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-            "status": 3,
-            "item": 7
-        },
-        {
-            "activity": 'CORREIA DA TRAÇÃO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-            "status": 3,
-            "item": 8
-        },
-        {
-            "activity": 'CORREIA DA TRAÇÃO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
-            "status": 3,
-            "item": 9
-        }
+        // {
+        //     "activity": 'ALTURA DOS BOCAIS: COM A PRENSA FECHADA E TRÊS PRÉ-FORMAS DENTRO ABAIXAR OS BOCAIS; ACIONAR CARGA E SOPRO LIBERAR O APERTO DO EIXO DO PISTÃO DO BOCAL ATÉ COMECE A VAZAR ENTÃO APERTAR ¼ DE VOLTA.',
+        //     "status": 3,
+        //     "item": 4
+        // },
+        // {
+        //     "activity": 'ALINHAMENTO RÉGUA/ PRENSA: COM A PRENSA FECHADA VERIFICAR A CENTRALIZAÇÃO DA RÉGUA NO MOLDE.',
+        //     "status": 3,
+        //     "item": 5
+        // },
+        // {
+        //     "activity": 'ALTURA RÉGUA/PRENSA: COM A PRENSA FECHADA E TRÊS PRÉ-FORMAS DENTRO FECHAR A RÉGUA COM ELA AVANÇADA E DEPOIS RECUADA AS PINÇAS DEVEM PEGAR A PRÉ-FORMA NA REGIÃO DO LACRE.',
+        //     "status": 3,
+        //     "item": 6
+        // },
+        // {
+        //     "activity": 'CORREIA DO SERVO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
+        //     "status": 3,
+        //     "item": 7
+        // },
+        // {
+        //     "activity": 'CORREIA DA TRAÇÃO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
+        //     "status": 3,
+        //     "item": 8
+        // },
+        // {
+        //     "activity": 'CORREIA DA TRAÇÃO DA RÉGUA: VERIFICAR A TENSÃO DA CORREIA A MESMA NÃO DEVE ESTAR DEMASIADAMENTE ESTICADA, DESALINHADA E/OU COM DENTES DANIFICADOS.',
+        //     "status": 3,
+        //     "item": 9
+        // }
     ]
 
     const [current, setCurrent] = useState(0)
@@ -90,7 +90,7 @@ const KeepingForm = () => {
                     <div className='p-2 bg-primary'>
 
                     </div>
-                    <h1>Manutenção preventiva mecânica</h1>
+                    <h1>Manutenção preventiva </h1>
                 </div>
                 <div className='card m-2 col-10'>
                     <div className="card-body">
@@ -131,19 +131,19 @@ const KeepingForm = () => {
                                     </div>
                                     <div className='p-2'>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
+                                            <input class="form-check-input" type="radio" name={"flexRadioDefault"+i} id={"flexRadioDefault"+i} />
                                             <label class="form-check-label" for="flexRadioDefault1">
                                                 OK
                                         </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
+                                            <input class="form-check-input" type="radio" name={"flexRadioDefault"+i} id={"flexRadioDefault"+i} />
                                             <label class="form-check-label" for="flexRadioDefault1">
                                                 Não
                                         </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
+                                            <input class="form-check-input" type="radio" name={"flexRadioDefault"+i} id={"flexRadioDefault"+i} />
                                             <label class="form-check-label" for="flexRadioDefault1">
                                                 ...
                                         </label>
@@ -158,7 +158,7 @@ const KeepingForm = () => {
                         }
                         {
                             isLastPage ? <button className='btn btn-primary m-2 ' data-bs-toggle="modal" data-bs-target="#addAnomally">
-                                <i className="fas fa-plus-circle "></i> Adicionar Atividade
+                                <i className="fas fa-plus-circle "></i> Adicionar Anomalia
                             </button> : <div></div>
                         }
 

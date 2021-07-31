@@ -22,7 +22,7 @@ const ChooseInput = () =>{
                   <div className='d-flex flex-column align-items-center'>
                     <img src={operador} alt="" height="400px"/>
                     <p>Sou operador de máquina e quero preencher formulário de anomalias</p>
-                    <Link to='/keeping'><button className='btn btn-primary'>Preencher Formulário</button></Link>
+                    <Link to='/forms'><button className='btn btn-primary'>Preencher Formulário</button></Link>
                   </div>
                 </div>
             </div>
