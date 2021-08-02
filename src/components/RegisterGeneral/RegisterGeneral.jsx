@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {db} from '../../firebase'
+import './RegisterGeneral.css'
 
 const RegisterGeneral = (props) => {
     const [modalType, setType] = useState();
@@ -45,8 +46,8 @@ const RegisterGeneral = (props) => {
                     </li>
                 </ul>
                 <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                        <table className='table table-primary'>
+                    <div class="tab-pane fade show active table-activities" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                        <table className='table table-primary '>
                             <thead className='header'>
                                 <th>Descrição</th>
                                 <th>Linha de Produção</th>
@@ -75,7 +76,7 @@ const RegisterGeneral = (props) => {
                         </table>
                         <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => { setMachine(undefined); setType(0); }}><i className="fas fa-plus-circle"></i> Nova Máquina</button>
                     </div>
-                    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                    <div class="tab-pane fade table-activities" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <table className='table table-primary'>
                             <thead className='header'>
                                 <th>Descrição</th>
@@ -237,7 +238,7 @@ function ActivityModal(props) {
     const [activityName, setActivityName] = useState('');
     const [machine, setMachine] = useState('');
     const [freq, setFreq] = useState('');
-    const [tech, setTech] = useState('');
+    const [duration, setDuration] = useState();
     const [lubricant, setLubricant] = useState('');
   
     const [value, setValue] = useState();
@@ -246,7 +247,7 @@ function ActivityModal(props) {
         setActivityName('')
         setMachine('')
         setFreq('')
-        setTech('')
+        setDuration('')
         setValue('')
         setLubricant('')
         
@@ -258,7 +259,7 @@ function ActivityModal(props) {
             setActivityName(props.activity.description)
         setMachine(props.activity.machine)
         setFreq(parseInt(props.activity.frequency))
-        setTech(props.activity.tech)
+        setDuration(props.activity.duration)
         setValue(props.activity.type)
         }else{
             clearModal();
@@ -273,7 +274,7 @@ function ActivityModal(props) {
         
         if( activityName !== "" &&  machine !== "" && freq !== "" ){
 
-            let activity= {description: activityName, machine: machine, frequency: freq, tech: tech, createdAt: Date.now(), type: value, lubricant: lubricant}
+            let activity= {description: activityName, machine: machine, frequency: freq, duration: duration, createdAt: Date.now(), type: value, lubricant: lubricant}
     
             await activityRef.doc().set(activity);
         }else{
@@ -335,8 +336,8 @@ function ActivityModal(props) {
                                 </select>
                             </div>
                             <div className="mx-1" >
-                                <label htmlFor="" className="form-label">Técnico</label>
-                                <input type="text"  className="form-control"  required value={tech} onChange={(e) => {setTech(e.target.value)}}/>
+                                <label htmlFor="" className="form-label">Tempo Estimado(min)</label>
+                                <input type="number"  className="form-control"  required value={parseInt(duration)} onChange={(e) => {setDuration(e.target.value)}}/>
                             </div>
 
                             

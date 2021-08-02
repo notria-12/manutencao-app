@@ -10,7 +10,7 @@ const ChooseInput = () =>{
             <div className='card col-4 m-2' >
                <div className='card-body p-2'>
                  <div  className='d-flex flex-column align-items-center'>
-                    <img src={pcpImg} alt="" height="400px"/>
+                    <img src={pcpImg} alt="" height="400px" className="img-fluid"/>
                     <p>Sou assistente de PCM e desejo acessar a área administrativa</p>
                      <Link to='/login'> <button className='btn btn-primary'>Ir para o Login</button></Link>
                  </div>
@@ -20,9 +20,9 @@ const ChooseInput = () =>{
             <div className='card col-4 m-2'>
                 <div className='card-body p-2'>
                   <div className='d-flex flex-column align-items-center'>
-                    <img src={operador} alt="" height="400px"/>
+                    <img src={operador} alt="" height="400px" className="img-fluid"/>
                     <p>Sou operador de máquina e quero preencher formulário de anomalias</p>
-                    <Link to='/keeping'><button className='btn btn-primary'>Preencher Formulário</button></Link>
+                    <Link to='/forms'><button className='btn btn-primary'>Preencher Formulário</button></Link>
                   </div>
                 </div>
             </div>

@@ -42,8 +42,10 @@ const Anomalies = () =>{
         <div className='anomalies'>
             <h3>Anomalias</h3>
 
+            <h6>Em Desenvolvimento..</h6>
 
-            <div className='table-activities'>
+
+            {/* <div className='table-activities'>
 
             <table className="table  table-primary text-primary table-hover">
                 <thead className='header' >
@@ -69,7 +71,7 @@ const Anomalies = () =>{
                 </tbody>
             </table>
 
-        </div>
+            </div> */}
         </div>
     )
 }

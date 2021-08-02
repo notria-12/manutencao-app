@@ -13,10 +13,11 @@ const ActivitiesList = (props) => {
     const [subFilter, setSubFilter] = useState('')
     const [filterValues, setFilterValues] = useState([])
     const [activities, setActivities] = useState([])
-    const [auxActivities, setAuxActivities] = useState([])
+    const [auxActivities, setAuxActivities] = useState(activities)
     const [loading, setLoading] = useState(false)
     const [machines, setMachines] = useState([]);
     const [machine, setMachine] = useState();
+    const [generated, setGenerated] = useState(false);
     
 
 
@@ -27,7 +28,7 @@ const ActivitiesList = (props) => {
             const month =parseInt(auxDate[1])
     
             setLoading(true)
-             await db.collection('scheduled_activities').doc(auxDate[0]).collection(month.toString()).doc(auxDate[2]).collection('activities').get().then( async result => {
+             await db.collection('scheduled_activities').doc(auxDate[0]).collection(month.toString()).doc(parseInt(auxDate[2]).toString()).collection('activities').get().then( async result => {
                   await db.collection('activities').get().then( async snap => { 
                       let activitiesAux = snap.docs.filter(  doc => 
                         result.docs.map( scheduledActvities => 
@@ -38,6 +39,8 @@ const ActivitiesList = (props) => {
 
                                 activitiesAux = activitiesAux.map( activity => {return {...activity, activityScheduled: result.docs.map( scheduledActvities => 
                                     {return {...scheduledActvities.data(), activityScheduledId: scheduledActvities.id }}).find( scheduled => scheduled.id_activity === activity.id)}})
+                                
+                                setActivities(activitiesAux);
                                 setAuxActivities(activitiesAux);
 
                        await db.collection('machines').get().then( snapMachine =>
@@ -67,14 +70,13 @@ const ActivitiesList = (props) => {
 
         switch (value) {
             case '1':
-                setFilterValues(['SOPRADORA', 'CHILER', 'ROTULADORA', 'ENVASADORA'])
+                setFilterValues(machines.map( machine => machine.description))
+                setFilterValue('1')
                 break;
             case '2':
-                setFilterValues(['FULANO', 'CICLANO', 'BELTRANO'])
+                setFilterValues(['MECÂNICA', 'LUBRIFICAÇÃO', 'ELÉTRICA'])
                 break;
-            case '3':
-                setFilterValues(['Á. Sanitária', 'S. Rajado', 'Desinfetante', 'S. Glicerinado', 'Multiuso', 'Detergente'])
-                break;
+            
             default:
                 setAuxActivities(activities)
                 break;
@@ -90,20 +92,27 @@ const ActivitiesList = (props) => {
 
         switch (filterValue) {
             case '1':
-                setAuxActivities(activities.filter(activity => activity.machine.toUpperCase() === value))
+                setAuxActivities(activities.filter(activity => machines.find( machine => machine.id === activity.machine).description === value ))
                 break;
             case '2':
-                console.log(value)
-                setAuxActivities(activities.filter(activity => activity.tec.toUpperCase() === value))
+                
+                setAuxActivities(activities.filter(activity => activity.type === value))
                 break;
-            case '3':
-                setAuxActivities(activities.filter(activity => activity.product === value))
+            case '0':
+                setAuxActivities(activities);
                 break;
             default:
                 break;
         }
     }
 
+    const generateFormActivities = async (title) =>{
+        setLoading(true)
+
+        await db.collection('activities_forms').doc().set({list: auxActivities.map( activity => activity.activityScheduled), finalized: false, date, title}).then(() => console.log('Finalizou'));
+        setGenerated(true);
+        setLoading(false)
+    }
 
     return (
         <div className='activities'>
@@ -117,10 +126,10 @@ const ActivitiesList = (props) => {
                     </label>
 
                     <select class="form-select mx-2" aria-label="Default select example" value={filterValue} onChange={changeMainFilter}>
-                        <option selected value="0">Selecione um filtro...</option>
+                        <option selected value="0">Todas Atividades</option>
                         <option value="1">Máquina</option>
-                        <option value="2">Técnico</option>
-                        <option value="3">Produto</option>
+                        <option value="2">Tipo Manutenção</option>
+                        
                     </select>
 
                     {
@@ -136,6 +145,10 @@ const ActivitiesList = (props) => {
                     }
 
 
+                </div>
+
+                <div>
+                    <button className='btn btn-primary'data-bs-toggle="modal" data-bs-target="#addTitle">GERAR FORMULÁRIO</button>
                 </div>
             </div>
 
@@ -173,6 +186,41 @@ const ActivitiesList = (props) => {
             </div>
 
             {machine && activity ? <ActivityModal activity={activity}  machine={machine} year={date.split('-')[0]} month={parseInt(date.split('-')[1]).toString()} day={date.split('-')[2]}></ActivityModal> : <div></div>}
+            <Modal generateForm={generateFormActivities} loading={loading} generated={generated}></Modal>
+        </div>
+    )
+}
+
+function Modal(props) {
+    const [title, setTitle] = useState('')
+
+    return (
+        <div className="modal fade" id="addTitle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="exampleModalLabel">Formulário de Atividades</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body">
+                       {props.loading ? <div class="d-flex justify-content-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div> : props.generated ? <h6>Formulário criado com sucesso!</h6> :<div class="form-floating">
+                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style={{height: '100px'}} value={title} onChange={ (e) => setTitle(e.target.value)} required></textarea>
+                            <label for="floatingTextarea2">Título do Formulário</label>
+                        </div> }
+
+                    </div>
+                    {props.loading ? <div></div> : <div className="modal-footer">
+                       { props.generated ?  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">OK</button> : <div>
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" className="btn btn-primary" onClick={() => props.generateForm(title)}>Enviar</button>
+                        </div>}
+                    </div>}
+                </div>
+            </div>
         </div>
     )
 }
@@ -180,10 +228,7 @@ const ActivitiesList = (props) => {
 function ActivityModal(props) {
 
     const endActivity = async () =>{
-        // console.log(props.year)
-        // console.log(props.month)
-        // console.log(props.day)
-        // console.log(props.activity.id)
+       
        await  db.collection('scheduled_activities').doc(props.year).collection(props.month).doc(props.day).collection('activities').doc(props.activity.activityScheduled.activityScheduledId).update({status: 1});
        window.location.reload();
     }
@@ -226,8 +271,8 @@ function ActivityModal(props) {
                                 <input type="text"  className="form-control" required value ={props.activity.type} disabled/>
                             </div>
                             <div className="mx-1" >
-                                <label htmlFor="" className="form-label fw-bold">Técnico</label>
-                                <input type="text"  className="form-control"  required value={props.activity.tech} disabled />
+                                <label htmlFor="" className="form-label fw-bold">Tempo Estimado(min)</label>
+                                <input type="text"  className="form-control"  required value={props.activity.duration} disabled />
                             </div>
                            
                         </div>
