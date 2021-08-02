@@ -27,7 +27,7 @@ const ActivitiesList = (props) => {
             const month =parseInt(auxDate[1])
     
             setLoading(true)
-             await db.collection('scheduled_activities').doc(auxDate[0]).collection(month.toString()).doc(auxDate[2]).collection('activities').get().then( async result => {
+             await db.collection('scheduled_activities').doc(auxDate[0]).collection(month.toString()).doc(parseInt(auxDate[2]).toString()).collection('activities').get().then( async result => {
                   await db.collection('activities').get().then( async snap => { 
                       let activitiesAux = snap.docs.filter(  doc => 
                         result.docs.map( scheduledActvities => 
@@ -263,8 +263,8 @@ function ActivityModal(props) {
                                 <input type="text"  className="form-control" required value ={props.activity.type} disabled/>
                             </div>
                             <div className="mx-1" >
-                                <label htmlFor="" className="form-label fw-bold">Técnico</label>
-                                <input type="text"  className="form-control"  required value={props.activity.tech} disabled />
+                                <label htmlFor="" className="form-label fw-bold">Tempo Estimado(min)</label>
+                                <input type="text"  className="form-control"  required value={props.activity.duration} disabled />
                             </div>
                            
                         </div>

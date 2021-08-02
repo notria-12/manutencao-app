@@ -237,7 +237,7 @@ function ActivityModal(props) {
     const [activityName, setActivityName] = useState('');
     const [machine, setMachine] = useState('');
     const [freq, setFreq] = useState('');
-    const [tech, setTech] = useState('');
+    const [duration, setDuration] = useState();
     const [lubricant, setLubricant] = useState('');
   
     const [value, setValue] = useState();
@@ -246,7 +246,7 @@ function ActivityModal(props) {
         setActivityName('')
         setMachine('')
         setFreq('')
-        setTech('')
+        setDuration('')
         setValue('')
         setLubricant('')
         
@@ -258,7 +258,7 @@ function ActivityModal(props) {
             setActivityName(props.activity.description)
         setMachine(props.activity.machine)
         setFreq(parseInt(props.activity.frequency))
-        setTech(props.activity.tech)
+        setDuration(props.activity.duration)
         setValue(props.activity.type)
         }else{
             clearModal();
@@ -273,7 +273,7 @@ function ActivityModal(props) {
         
         if( activityName !== "" &&  machine !== "" && freq !== "" ){
 
-            let activity= {description: activityName, machine: machine, frequency: freq, tech: tech, createdAt: Date.now(), type: value, lubricant: lubricant}
+            let activity= {description: activityName, machine: machine, frequency: freq, duration: duration, createdAt: Date.now(), type: value, lubricant: lubricant}
     
             await activityRef.doc().set(activity);
         }else{
@@ -335,8 +335,8 @@ function ActivityModal(props) {
                                 </select>
                             </div>
                             <div className="mx-1" >
-                                <label htmlFor="" className="form-label">Técnico</label>
-                                <input type="text"  className="form-control"  required value={tech} onChange={(e) => {setTech(e.target.value)}}/>
+                                <label htmlFor="" className="form-label">Tempo Estimado(min)</label>
+                                <input type="number"  className="form-control"  required value={parseInt(duration)} onChange={(e) => {setDuration(e.target.value)}}/>
                             </div>
 
                             

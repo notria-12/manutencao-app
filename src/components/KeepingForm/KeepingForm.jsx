@@ -16,6 +16,7 @@ const KeepingForm = () => {
     const [machines, setMachines] = useState([])
 
 
+
     useEffect(() => {
 
         async function getForms(){
@@ -30,6 +31,7 @@ const KeepingForm = () => {
                                 { return {...doc.data(), "id": doc.id}})
                                 
                                 setActivities(auxActivities);
+                                console.log('Chamou')
                         
                             await db.collection('machines').get().then( snapMachine =>
                             {
@@ -42,7 +44,9 @@ const KeepingForm = () => {
                
             })
         }
-        getForms()
+        if(activities.length === 0){
+            getForms()
+        }
 
         if (current < 4) {
             setDisableBackButton(true)
@@ -50,14 +54,14 @@ const KeepingForm = () => {
             setDisableBackButton(false)
         }
 
-        if (current > (activities.length - 4)) {
+        if (current >= (activities.length - 4)) {
             setIsLastPage(true)
         } else {
             setIsLastPage(false)
         }
 
         // if(current >)
-    }, []);
+    }, [current]);
 
 
     // const addActivity = (activityDesc) =>{
@@ -104,16 +108,20 @@ const KeepingForm = () => {
                                 </select>
                             </div>
                         </div> */}
+                        {/* tam = 6 => i > current e i <= current + 4 */}
                         <h3>Atividades</h3>
                         {
-                            activities.map((activity, i) => {
-                                return <div className='card d-flex flex-row align-items-center justify-content-between my-1' key={i}>
+                            activities.filter((activity, i )=> i+1 > current && i+1<= (current+4)).map((activity, i) => {
+
+                                return (
+                                  <div className='my-1'>
+                                      {machines && machines.length > 0 ? <label htmlFor="" className="align-self-start bg-primary text-white px-1">{machines.find( machine => machine.id === activity.machine).description+" - "+machines.find( machine => machine.id === activity.machine).product}</label> : <div></div>}
+                                <div className='card d-flex flex-row align-items-center justify-content-between ' key={i}>
                                     
-                                    <label htmlFor="" className="align-self-start">{machines.find( machine => machine.id === activity.machine).description}</label>
-                                    <div className='item-number'>
+                                    {/* <div className='item-number'>
                                         
                                         <h5>{i+1}</h5>
-                                    </div>
+                                    </div> */}
                                     
                                     <div className='d-flex justify-content-between w-100 align-items-center'>
                                     <div className=' p-2'>
@@ -139,10 +147,10 @@ const KeepingForm = () => {
                                         </div>
                                     </div>
                                     </div>
-                                    
-
-
                                 </div>
+                                  </div>  
+                                );
+                                
                             })
                         }
                         {
@@ -162,7 +170,7 @@ const KeepingForm = () => {
                                 if (current < (activities.length - 4)) {
                                     setCurrent(current + 4)
                                 }
-                            }} >AVANÇAR</button>
+                            }} >{current >= (activities.length - 4) ? 'ENVIAR' : 'AVANÇAR'}</button>
                         </div>
                     </div>
                 </div>
