@@ -14,6 +14,7 @@ const KeepingForm = () => {
     const [isLastPage, setIsLastPage] = useState(false)
     const [activities, setActivities]= useState([])
     const [machines, setMachines] = useState([])
+    const [activitiesStatus, setActivitiesStatus] = useState([]);
 
 
 
@@ -31,7 +32,7 @@ const KeepingForm = () => {
                                 { return {...doc.data(), "id": doc.id}})
                                 
                                 setActivities(auxActivities);
-                                console.log('Chamou')
+                                console.log(auxActivities)
                         
                             await db.collection('machines').get().then( snapMachine =>
                             {
@@ -70,6 +71,32 @@ const KeepingForm = () => {
     //     activities.push(activity);
     // }
 
+    function onChangeValue(event) {
+        console.log(event.target.name)
+
+        if(activitiesStatus.length > 0){
+            const activityStatus = activitiesStatus.find( status => status.id === event.target.name);
+            if( activitiesStatus !== undefined){
+                setActivitiesStatus([...activitiesStatus.filter( status => status.id !== event.target.name), {id: event.target.name, status: event.target.value}])
+            }else{
+                setActivitiesStatus([...activitiesStatus, {id: event.target.name, status: event.target.value}])
+            }
+        }else{
+            setActivitiesStatus([{id: event.target.name, status: event.target.value}])
+        }
+        
+      }
+
+      const sendForm = async () =>{
+
+        const form = await db.collection('activities_forms').doc(activity_id).get();
+        const date = form.data().date.split('-');
+        const list = form.data().list;
+
+        const auxList = list.filter( activity_schedule => activitiesStatus.filter( activityStt => activityStt.status === "OK").map(activitiesId => activitiesId.id).includes(activity_schedule.id_activity))
+          console.log(auxList)
+
+      }
     return (
         <div className='keeping-form'>
 
@@ -129,19 +156,19 @@ const KeepingForm = () => {
                                             {activity.description}
                                         </h6>
                                     </div >
-                                    <div className='p-2'>
+                                    <div className='p-2 btn-group d-flex flex-column'id={activity.id} data-toggle="buttons" onChange= {onChangeValue } >
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name={"flexRadioDefault"+i} id={"flexRadioDefault"+i} />
-                                            <label class="form-check-label" for="flexRadioDefault1">OK</label>
+                                            <input class="form-check-input" type="radio" name={activity.id} id={activity.id} value="OK"/>
+                                            <label class="form-check-label" for={activity.id}>OK</label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name={"flexRadioDefault"+i} id={"flexRadioDefault"+i} />
-                                            <label class="form-check-label" for="flexRadioDefault1">
+                                            <input class="form-check-input" type="radio" name={activity.id} id={activity.id} value="NÃO" />
+                                            <label class="form-check-label" for={activity.id}>
                                                 Não</label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name={"flexRadioDefault"+i} id={"flexRadioDefault"+i} />
-                                            <label class="form-check-label" for="flexRadioDefault1">
+                                            <input class="form-check-input" type="radio" name={activity.id} id={activity.id} value="..."/>
+                                            <label class="form-check-label" for={activity.id}>
                                                 ...
                                         </label>
                                         </div>
@@ -154,7 +181,7 @@ const KeepingForm = () => {
                             })
                         }
                         {
-                            isLastPage ? <button className='btn btn-primary m-2 ' data-bs-toggle="modal" data-bs-target="#addAnomally">
+                            current >= (activities.length - 4) ? <button className='btn btn-primary m-2 ' data-bs-toggle="modal" data-bs-target="#addAnomally">
                                 <i className="fas fa-plus-circle "></i> Adicionar Anomalia
                             </button> : <div></div>
                         }
@@ -169,6 +196,8 @@ const KeepingForm = () => {
                             <button className='btn btn-primary m-1' onClick={() => {
                                 if (current < (activities.length - 4)) {
                                     setCurrent(current + 4)
+                                }else{
+                                    sendForm()
                                 }
                             }} >{current >= (activities.length - 4) ? 'ENVIAR' : 'AVANÇAR'}</button>
                         </div>
