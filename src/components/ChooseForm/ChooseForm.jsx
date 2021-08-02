@@ -23,9 +23,9 @@ const ChooseForm = () =>{
                <div className='card-body p-2'>
                  <div  className='d-flex flex-column align-items-center'>
                    {
-                      forms.map(
+                      forms.length > 0 ? forms.map(
                           form => <Link to={`/keeping/${form.id}`}><button className='card'><div className='d-flex'><h6>{form.title}</h6> </div></button></Link>
-                      )
+                      ): <h6>Nenhum formulário disponível no momento!</h6>
                    }
                  </div>
                </div>

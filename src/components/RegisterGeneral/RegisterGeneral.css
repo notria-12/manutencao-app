@@ -1,0 +1,17 @@
+.register-page{
+    /* background-color: darkgrey; */
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    /* overflow-y: scroll; */
+}
+
+.register-page .table-activities {
+    /* flex-grow: 1; */
+    overflow-y: scroll;
+    /* background-color: darkgrey; */
+}
+.register-page .table-activities .header{
+    position:sticky;
+    top: 0 ;
+}

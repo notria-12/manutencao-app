@@ -100,13 +100,15 @@ const KeepingForm = () => {
         const auxList = list.filter( activity_schedule => activitiesStatus.filter( activityStt => activityStt.status === "OK").map(activitiesId => activitiesId.id).includes(activity_schedule.id_activity))
           console.log(auxList)
           
-        //   for(let activity of auxList){
-        //     await db.collection('scheduled_activities').doc(date[0]).collection(parseInt(date[1]).toString()).doc(parseInt(date[2]).toString()).collection('activities').doc(activity.activityScheduledId).update({status: 1})
-        //   }
+          for(let activity of auxList){
+            await db.collection('scheduled_activities').doc(date[0]).collection(parseInt(date[1]).toString()).doc(parseInt(date[2]).toString()).collection('activities').doc(activity.activityScheduledId).update({status: 1})
+          }
+
+          await db.collection('activities_forms').doc(activity_id).update({finalized: true});
 
         
         setLoading(false);
-        // history.goBack()
+        
 
 
       }
@@ -177,12 +179,12 @@ const KeepingForm = () => {
                                         <div className="form-check" id={activity.id}>
                                             <input className="form-check-input" type="radio" name={activity.id}  value="NÃO" />
                                             <label className="form-check-label" htmlFor={activity.id}>
-                                                Não</label>
+                                                Não Ok</label>
                                         </div>
                                         <div className="form-check" id={activity.id}>
                                             <input className="form-check-input" type="radio" name={activity.id}  value="..." defaultChecked />
                                             <label className="form-check-label" htmlFor={activity.id}>
-                                                ...
+                                                N SE APLICA
                                         </label>
                                         </div>
                                     </div>

@@ -17,6 +17,7 @@ const ActivitiesList = (props) => {
     const [loading, setLoading] = useState(false)
     const [machines, setMachines] = useState([]);
     const [machine, setMachine] = useState();
+    const [generated, setGenerated] = useState(false);
     
 
 
@@ -105,11 +106,12 @@ const ActivitiesList = (props) => {
         }
     }
 
-    const generateFormActivities = (title) =>{
-        console.log(auxActivities);
+    const generateFormActivities = async (title) =>{
+        setLoading(true)
 
-        db.collection('activities_forms').doc().set({list: auxActivities.map( activity => activity.activityScheduled), finalized: false, date, title}).then(() => console.log('Finalizou'));
-
+        await db.collection('activities_forms').doc().set({list: auxActivities.map( activity => activity.activityScheduled), finalized: false, date, title}).then(() => console.log('Finalizou'));
+        setGenerated(true);
+        setLoading(false)
     }
 
     return (
@@ -184,7 +186,7 @@ const ActivitiesList = (props) => {
             </div>
 
             {machine && activity ? <ActivityModal activity={activity}  machine={machine} year={date.split('-')[0]} month={parseInt(date.split('-')[1]).toString()} day={date.split('-')[2]}></ActivityModal> : <div></div>}
-            <Modal generateForm={generateFormActivities}></Modal>
+            <Modal generateForm={generateFormActivities} loading={loading} generated={generated}></Modal>
         </div>
     )
 }
@@ -201,16 +203,22 @@ function Modal(props) {
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
-                        <div class="form-floating">
+                       {props.loading ? <div class="d-flex justify-content-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div> : props.generated ? <h6>Formulário criado com sucesso!</h6> :<div class="form-floating">
                             <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style={{height: '100px'}} value={title} onChange={ (e) => setTitle(e.target.value)} required></textarea>
                             <label for="floatingTextarea2">Título do Formulário</label>
-                        </div>
+                        </div> }
 
                     </div>
-                    <div className="modal-footer">
+                    {props.loading ? <div></div> : <div className="modal-footer">
+                       { props.generated ?  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">OK</button> : <div>
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="button" className="btn btn-primary" onClick={() => props.generateForm(title)}>Enviar</button>
-                    </div>
+                        </div>}
+                    </div>}
                 </div>
             </div>
         </div>

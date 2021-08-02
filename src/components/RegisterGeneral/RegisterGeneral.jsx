@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {db} from '../../firebase'
+import './RegisterGeneral.css'
 
 const RegisterGeneral = (props) => {
     const [modalType, setType] = useState();
@@ -45,8 +46,8 @@ const RegisterGeneral = (props) => {
                     </li>
                 </ul>
                 <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                        <table className='table table-primary'>
+                    <div class="tab-pane fade show active table-activities" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                        <table className='table table-primary '>
                             <thead className='header'>
                                 <th>Descrição</th>
                                 <th>Linha de Produção</th>
@@ -75,7 +76,7 @@ const RegisterGeneral = (props) => {
                         </table>
                         <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => { setMachine(undefined); setType(0); }}><i className="fas fa-plus-circle"></i> Nova Máquina</button>
                     </div>
-                    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                    <div class="tab-pane fade table-activities" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                     <table className='table table-primary'>
                             <thead className='header'>
                                 <th>Descrição</th>
