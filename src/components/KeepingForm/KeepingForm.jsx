@@ -195,11 +195,11 @@ const KeepingForm = () => {
                                 
                             })
                         }
-                        {
+                        {/* {
                             current >= (activities.length - 4) ? <button className='btn btn-primary m-2 ' data-bs-toggle="modal" data-bs-target="#addAnomally">
                                 <i className="fas fa-plus-circle "></i> Adicionar Anomalia
                             </button> : <div></div>
-                        }
+                        } */}
 
 
                         <div className='d-flex justify-content-end'>
