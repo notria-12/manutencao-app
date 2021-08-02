@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react'
 import { useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { db } from '../../firebase'
 import './KeepingForm.css'
 
@@ -15,6 +15,8 @@ const KeepingForm = () => {
     const [activities, setActivities]= useState([])
     const [machines, setMachines] = useState([])
     const [activitiesStatus, setActivitiesStatus] = useState([]);
+    const [loading, setLoading] = useState(false);
+    
 
 
 
@@ -76,7 +78,7 @@ const KeepingForm = () => {
 
         if(activitiesStatus.length > 0){
             const activityStatus = activitiesStatus.find( status => status.id === event.target.name);
-            if( activitiesStatus !== undefined){
+            if( activityStatus !== undefined){
                 setActivitiesStatus([...activitiesStatus.filter( status => status.id !== event.target.name), {id: event.target.name, status: event.target.value}])
             }else{
                 setActivitiesStatus([...activitiesStatus, {id: event.target.name, status: event.target.value}])
@@ -89,12 +91,23 @@ const KeepingForm = () => {
 
       const sendForm = async () =>{
 
+        setLoading(true)
+
         const form = await db.collection('activities_forms').doc(activity_id).get();
         const date = form.data().date.split('-');
         const list = form.data().list;
 
         const auxList = list.filter( activity_schedule => activitiesStatus.filter( activityStt => activityStt.status === "OK").map(activitiesId => activitiesId.id).includes(activity_schedule.id_activity))
           console.log(auxList)
+          
+        //   for(let activity of auxList){
+        //     await db.collection('scheduled_activities').doc(date[0]).collection(parseInt(date[1]).toString()).doc(parseInt(date[2]).toString()).collection('activities').doc(activity.activityScheduledId).update({status: 1})
+        //   }
+
+        
+        setLoading(false);
+        // history.goBack()
+
 
       }
     return (
@@ -141,9 +154,9 @@ const KeepingForm = () => {
                             activities.filter((activity, i )=> i+1 > current && i+1<= (current+4)).map((activity, i) => {
 
                                 return (
-                                  <div className='my-1'>
+                                  <div className='my-1' key={activity.id} id={activity.id}>
                                       {machines && machines.length > 0 ? <label htmlFor="" className="align-self-start bg-primary text-white px-1">{machines.find( machine => machine.id === activity.machine).description+" - "+machines.find( machine => machine.id === activity.machine).product}</label> : <div></div>}
-                                <div className='card d-flex flex-row align-items-center justify-content-between ' key={i}>
+                                <div className='card d-flex flex-row align-items-center justify-content-between ' >
                                     
                                     {/* <div className='item-number'>
                                         
@@ -156,19 +169,19 @@ const KeepingForm = () => {
                                             {activity.description}
                                         </h6>
                                     </div >
-                                    <div className='p-2 btn-group d-flex flex-column'id={activity.id} data-toggle="buttons" onChange= {onChangeValue } >
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name={activity.id} id={activity.id} value="OK"/>
-                                            <label class="form-check-label" for={activity.id}>OK</label>
+                                    <div className='p-2 btn-group d-flex flex-column'  onChange= {onChangeValue }  id={activity.id} >
+                                        <div className="form-check" id={activity.id}>
+                                            <input className="form-check-input" type="radio" name={activity.id}  value="OK" />
+                                            <label className="form-check-label" htmlFor={activity.id}>OK</label>
                                         </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name={activity.id} id={activity.id} value="NÃO" />
-                                            <label class="form-check-label" for={activity.id}>
+                                        <div className="form-check" id={activity.id}>
+                                            <input className="form-check-input" type="radio" name={activity.id}  value="NÃO" />
+                                            <label className="form-check-label" htmlFor={activity.id}>
                                                 Não</label>
                                         </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name={activity.id} id={activity.id} value="..."/>
-                                            <label class="form-check-label" for={activity.id}>
+                                        <div className="form-check" id={activity.id}>
+                                            <input className="form-check-input" type="radio" name={activity.id}  value="..." defaultChecked />
+                                            <label className="form-check-label" htmlFor={activity.id}>
                                                 ...
                                         </label>
                                         </div>
@@ -193,13 +206,15 @@ const KeepingForm = () => {
                                     setCurrent(current - 4)
                                 }
                             }} disabled={disableBackButton}>VOLTAR</button>
-                            <button className='btn btn-primary m-1' onClick={() => {
-                                if (current < (activities.length - 4)) {
+                            { current < (activities.length - 4) ? <button className='btn btn-primary m-1' onClick={() => {
+                                
                                     setCurrent(current + 4)
-                                }else{
+                                
+                            }}> AVANÇAR</button> : <button className='btn btn-primary m-1' onClick={() => {
+                              
                                     sendForm()
-                                }
-                            }} >{current >= (activities.length - 4) ? 'ENVIAR' : 'AVANÇAR'}</button>
+                                
+                            }} data-bs-toggle="modal" data-bs-target="#modalLoading" data-backdrop="static" data-keyboard="false"> ENVIAR</button>}
                         </div>
                     </div>
                 </div>
@@ -207,6 +222,7 @@ const KeepingForm = () => {
             {/* <Modal addActivity={addActivity}>
 
             </Modal> */}
+             <ModalLoading loading={loading}></ModalLoading>
         </div>
     )
 }
@@ -233,6 +249,39 @@ function Modal(props) {
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="button" className="btn btn-primary" onClick={ props.addActivity(activityDesc)}>Salvar</button>
                     </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function ModalLoading(props) {
+    const history = useHistory();
+
+    function backToChooseForm(){
+        history.goBack()
+    }
+
+    return (
+        <div className="modal fade" id="modalLoading" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="exampleModalLabel">Formulário de atividades</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body">
+                   {props.loading ?  <div class="d-flex justify-content-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>: <div><h6>Formulário enviado com sucesso!</h6></div> }
+
+                    </div>
+                    {props.loading ? <div></div> : <div className="modal-footer">
+                        
+                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={() => backToChooseForm()} >OK</button>
+                    </div>}
                 </div>
             </div>
         </div>
