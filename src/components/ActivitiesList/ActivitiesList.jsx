@@ -118,7 +118,7 @@ const ActivitiesList = (props) => {
         <div className='activities'>
             <div className='header-acitvities d-flex justify-content-between '>
               
-                <h3>{date}</h3>
+                <h3>{date.split('-')[2]+"/"+date.split('-')[1]+"/"+date.split('-')[0]}</h3>
 
                 <div className='filter-activities col-5 d-flex align-content-center m-2'>
                     <label className='form-label m-2 '>
@@ -294,19 +294,19 @@ function ActivityModal(props) {
                                
 
                     </div>
-                    <div className="modal-footer d-flex justify-content-start">
+                    {/* <div className="modal-footer d-flex justify-content-start">
                     <div className="d-flex align-items-center">
                             
-                            {/* <div className='d-flex justify-content-center'> */}
+                            
                             <label htmlFor="" className="form-label fw-bold fs-6 m-2">Ação: </label>
-                            {/* </div> */}
+                            
                             <select className="form-select" aria-label="Default select example" >
                                     <option selected value="0">Gerar Formulário</option>
                                     <option value="1">Marcar como concluída</option>
                                 </select>
                         </div>
                         <button type="button" className="btn btn-primary"   id="concludeButton" onClick={() => endActivity()}>CONCLUIR</button>
-                    </div>
+                    </div> */}
                 </form>
             </div>
         </div>

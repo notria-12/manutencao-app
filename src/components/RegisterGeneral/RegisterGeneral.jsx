@@ -92,7 +92,7 @@ const RegisterGeneral = (props) => {
                                   <tr>
                                   <th  scope="col" className="header">Descrição</th>
                                     <th  scope="col" className="header">Máquina</th>
-                                    <th  scope="col" className="header">Setor</th>
+                                    <th  scope="col" className="header">Linha</th>
 
                                     
                                     
@@ -101,13 +101,22 @@ const RegisterGeneral = (props) => {
                                 </thead>
                                 <tbody>
                                     {
-                                        activities.map((activity, i) =>{
+                                        activities.sort(function (a, b) {
+                                            if (a.description > b.description) {
+                                              return 1;
+                                            }
+                                            if (a.description < b.description) {
+                                              return -1;
+                                            }
+                                            // a must be equal to b
+                                            return 0;
+                                          }).map((activity, i) =>{
                                             return(
                                                 <tr key={i}>
                                                     <td>{activity.description}</td>
                                                     {/* <td>{activity.description}</td> */}
                                                     {machines.length > 0 ? <td>{machines.find( machine => machine.id === activity.machine ).description}</td> : <td>TESTE</td>}
-                                                    {machines.length > 0 ? <td>{machines.find( machine => machine.id === activity.machine ).sector}</td> : <td>TESTE</td>}
+                                                    {machines.length > 0 ? <td>{machines.find( machine => machine.id === activity.machine ).product}</td> : <td>TESTE</td>}
                                                     
                                                     <td>
                                                         <div className='d-flex'>
@@ -144,6 +153,8 @@ function Modal(props) {
     const [product, setProduct] = useState('Product');
     const [nSerie, setNSerie] = useState('');
     const [sector, setSector]= useState('');
+    const [loading, setLoading] = useState(false);
+    const [loaded, setLoaded] = useState(false);
  
 
     useEffect(() =>{
@@ -163,11 +174,17 @@ function Modal(props) {
 
 
     const editMachine = async () => {
+        setLoading(true)
         await db.collection('machines').doc(props.machine.id).update({"description":desc, "product": product, 'n_serie': nSerie, 'sector': sector});
+        setLoading(false)
+        setLoaded(true);
     }
 
     const addMachine = async () => {
+        setLoading(true)
         await db.collection('machines').doc().set({"description": desc, "product": product, 'n_serie': nSerie, 'sector': sector})
+        setLoading(false)
+        setLoaded(true)
 
     }
    
@@ -180,7 +197,11 @@ function Modal(props) {
                         <h5 className="modal-title" id="exampleModalLabel">{props.type === 0 ? 'Nova Máquina': 'Edição de Máquina'}</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div className="modal-body">
+                    {loading ? <div className='modal-body'><div class="d-flex justify-content-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Carregando...</span>
+                        </div>
+                    </div></div> : loaded ? <div className='modal-body'><h6>Maquina {props.type ? 'alterada': 'cadastrada'} com sucesso</h6></div> :<div className="modal-body">
                     <div className="d-flex my-2 justify-content-between ">
                             <div className='col-5' >
                                 <label htmlFor="" className="form-label">Linha de Produção</label>
@@ -206,8 +227,10 @@ function Modal(props) {
                         </div>
                        
 
-                    </div>
-                    <div className="modal-footer">
+                    </div>}
+                    { loading ? <div></div> : loaded ? <div className='modal-footer'>
+                    <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={clearModal}>OK</button>
+                    </div> :<div className="modal-footer">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="button" className="btn btn-primary" id='saveButton' onClick={() =>{
                             
@@ -215,14 +238,14 @@ function Modal(props) {
                                 case 0:
                                     if(desc !== '') {
                                         addMachine()
-                                        clearModal()
+                                        // clearModal()
                                         
                                      }
                                     break;
                                 case 1:
                                     if(desc !== '') {
                                         editMachine()
-                                        clearModal()
+                                        // clearModal()
                                         
                                      }
 
@@ -234,7 +257,7 @@ function Modal(props) {
                             }
 
                              }}>Salvar</button>
-                    </div>
+                    </div>}
                 </div>
             </form>
         </div>
@@ -245,6 +268,7 @@ function Modal(props) {
         setProduct('');
         setNSerie('');
         setSector('');
+        setLoaded(false);
        
     }
 }
@@ -255,6 +279,8 @@ function ActivityModal(props) {
     const [freq, setFreq] = useState('');
     const [duration, setDuration] = useState();
     const [lubricant, setLubricant] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [loaded, setLoaded] = useState(false);
   
     const [value, setValue] = useState();
 
@@ -265,17 +291,18 @@ function ActivityModal(props) {
         setDuration('')
         setValue('')
         setLubricant('')
-        
+        setLoaded(false)
     }
 
 
     useEffect(() => {
         if(props.activity){
-            setActivityName(props.activity.description)
+        setActivityName(props.activity.description)
         setMachine(props.activity.machine)
         setFreq(parseInt(props.activity.frequency))
         setDuration(props.activity.duration)
         setValue(props.activity.type)
+        setLubricant(props.activity.lubricant)
         }else{
             clearModal();
         }
@@ -286,16 +313,25 @@ function ActivityModal(props) {
     async function handleSave(){
         const activityRef = db.collection('activities');
         
-        
-        if( activityName !== "" &&  machine !== "" && freq !== "" ){
-
+        setLoading(true);
+        if(props.type){
             let activity= {description: activityName, machine: machine, frequency: freq, duration: duration, createdAt: Date.now(), type: value, lubricant: lubricant}
-    
-            await activityRef.doc().set(activity);
+            await activityRef.doc(props.activity.id).update(activity);
+
         }else{
-            console.log('Preencha os dados corretamente');
+            if( activityName !== "" &&  machine !== "" && freq !== "" ){
+
+                let activity= {description: activityName, machine: machine, frequency: freq, duration: duration, createdAt: Date.now(), type: value, lubricant: lubricant}
+        
+                await activityRef.doc().set(activity);
+            }else{
+                console.log('Preencha os dados corretamente');
+            }
         }
-        clearModal();
+        setLoading(false);
+
+        setLoaded(true)
+        
     }
     
     return (
@@ -306,7 +342,11 @@ function ActivityModal(props) {
                         <h5 className="modal-title" id="exampleModalLabel">Descrição da Atividade</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div className="modal-body">
+                    {loading ? <div className="modal-body"><div class="d-flex justify-content-center">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Carregando...</span>
+                        </div>
+                    </div></div> : loaded ? <div className="modal-body">Atividade {props.type ? 'alterada' : 'salva'} com sucesso!</div> : <div className="modal-body">
                         <div className='m-2'>
                             <label htmlFor="" className="form-label">Atividade</label>
                             <input type="text"  className="form-control" required value ={activityName} onChange={ (e) => {setActivityName(e.target.value); } }/>
@@ -326,18 +366,7 @@ function ActivityModal(props) {
                                 </select>
                                
                             </div>
-                           
-                          
-                            {/* <div className='m-2 d-flex col-6'>
-                                <div className='mx-1'>
-                                    <label htmlFor="" className="form-label col-4">Frequência</label>
-                                    <input type="number"  className="form-control" ref={freqRef} required/>
-                                </div>
-                                <div className='mx-1'>
-                                    <label htmlFor="" className="form-label">Paradas</label>
-                                    <input type="number"  className="form-control" ref={stopsRef} required/>
-                                </div>
-                            </div> */}
+              
 
                         </div>
                         <div className="d-flex m-2 ">
@@ -373,27 +402,15 @@ function ActivityModal(props) {
                             }
                         </div>
 
-                        {/* <div className="m-2">
-                            <label htmlFor="" className="form-label">Realizada em:</label>
-                        </div>
-                        <div className="d-flex m-2 border p-4 flex-wrap">
-                            {
-                                Array(30).fill(0).map((v, i) => {
-                                    return <div className="form-check m-1" key={i}>
-                                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                        <label className="form-check-label" for="flexCheckDefault">
-                                            {i + 1}
-                                        </label>
-                                    </div>
-                                })
-                            }
-                        </div> */}
-
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" className="btn btn-primary"  onClick={handleSave} id="saveButton2" >Salvar</button>
-                    </div>
+                    </div>}
+                    {loading ? <div></div>: loaded ? 
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={clearModal}>OK</button>
+                        </div> : 
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" className="btn btn-primary"  onClick={handleSave} id="saveButton2" >{props.type ? 'SALVAR': 'CADASTRAR'}</button>
+                        </div>}
                 </form>
             </div>
         </div>
