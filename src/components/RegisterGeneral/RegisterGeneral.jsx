@@ -36,7 +36,7 @@ const RegisterGeneral = (props) => {
 
 
     return (
-        <div className='register-page'>
+        <div >
                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Máquinas</button>
@@ -46,13 +46,17 @@ const RegisterGeneral = (props) => {
                     </li>
                 </ul>
                 <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade show active table-activities" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                        <table className='table table-primary '>
-                            <thead className='header'>
-                                <th>Descrição</th>
-                                <th>Linha de Produção</th>
-                                <th>Setor</th>
-                                <th>Ação</th>
+                    <div class="tab-pane fade show active  " id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                      <div className="register-page">
+                      <div className="table-activities">
+                      <table className='table table-light'>
+                            <thead className='header text-primary table-primary'>
+                                <tr>
+                                    <th scope="col" className="header">Descrição</th>
+                                    <th scope="col" className="header">Linha de Produção</th>
+                                    <th scope="col" className="header">Setor</th>
+                                    <th scope="col" className="header">Ação</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 {
@@ -74,42 +78,53 @@ const RegisterGeneral = (props) => {
                                 }
                             </tbody>
                         </table>
+                      </div>
+                        
+                      </div>
                         <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addAnomally" onClick={() => { setMachine(undefined); setType(0); }}><i className="fas fa-plus-circle"></i> Nova Máquina</button>
                     </div>
-                    <div class="tab-pane fade table-activities" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                    <table className='table table-primary'>
-                            <thead className='header'>
-                                <th>Descrição</th>
-                                <th>Máquina</th>
-                                <th>Setor</th>
+                    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                        
+                        <div className="register-page">
+                            <div className="table-activities">
+                            <table className='table table-light '>
+                                <thead className='header text-primary table-primary '>
+                                  <tr>
+                                  <th  scope="col" className="header">Descrição</th>
+                                    <th  scope="col" className="header">Máquina</th>
+                                    <th  scope="col" className="header">Setor</th>
 
-                                {/* <th>Linha de Produção</th> */}
-                                
-                                <th>Ação</th>
-                            </thead>
-                            <tbody>
-                                {
-                                    activities.map((activity, i) =>{
-                                        return(
-                                            <tr key={i}>
-                                                <td>{activity.description}</td>
-                                                {/* <td>{activity.description}</td> */}
-                                                {machines.length > 0 ? <td>{machines.find( machine => machine.id === activity.machine ).description}</td> : <td>TESTE</td>}
-                                                {machines.length > 0 ? <td>{machines.find( machine => machine.id === activity.machine ).sector}</td> : <td>TESTE</td>}
-                                                
-                                                <td>
-                                                    <div>
-                                                        <button className='btn p-1'  onClick={() => removeActivity(activity.id)}><i className="far fa-trash-alt"></i></button>
-                                                        <button className='btn p-1' data-bs-toggle="modal" data-bs-target="#addActivity" onClick={() => {setActivity(activity); setModalActivityType(1)}}><i className="far fa-edit"></i></button>
-                                                    </div>
-                                                </td>
-                                                
-                                            </tr>
-                                        )
-                                    })
-                                }
-                            </tbody>
+                                    
+                                    
+                                    <th  scope="col" className="header">Ação</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        activities.map((activity, i) =>{
+                                            return(
+                                                <tr key={i}>
+                                                    <td>{activity.description}</td>
+                                                    {/* <td>{activity.description}</td> */}
+                                                    {machines.length > 0 ? <td>{machines.find( machine => machine.id === activity.machine ).description}</td> : <td>TESTE</td>}
+                                                    {machines.length > 0 ? <td>{machines.find( machine => machine.id === activity.machine ).sector}</td> : <td>TESTE</td>}
+                                                    
+                                                    <td>
+                                                        <div className='d-flex'>
+                                                            <button className='btn p-1'  onClick={() => removeActivity(activity.id)}><i className="far fa-trash-alt"></i></button>
+                                                            <button className='btn p-1' data-bs-toggle="modal" data-bs-target="#addActivity" onClick={() => {setActivity(activity); setModalActivityType(1)}}><i className="far fa-edit"></i></button>
+                                                        </div>
+                                                    </td>
+                                                    
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
                         </table>
+                            </div>
+
+                        </div>
                         <button className='btn btn-primary mt-2' data-bs-toggle="modal" data-bs-target="#addActivity" onClick={() => {setActivity(undefined); setModalActivityType(0)}}><i class="fas fa-plus-circle"></i> Nova Atividade</button>
                     </div>
                    
